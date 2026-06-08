@@ -1,7 +1,7 @@
 --[[
     =======================================================================
-    🌌 NEXUS A.I. - BY HIROSHI738 (GLOBAL PRO EDITION)
-    💎 English UI | Ghost-Stroke Bug FIXED | Stream-Proof | Perfect Aim
+    🌌 NEXUS A.I. - BY HIROSHI738 (ULTIMATE ZERO-BUG EDITION)
+    💎 UIScale Animation Engine | 100% Stream-Proof | English Premium UI
     =======================================================================
 ]]
 
@@ -26,16 +26,16 @@ if LP.PlayerGui:FindFirstChild("HiroshiNexus") then
 end
 
 -- ==========================================
--- 🎨 PRO THEME ENGINE 
+-- 🎨 THEME ENGINE & PALETTE
 -- ==========================================
 local BaseColors = {
-    Bg = Color3.fromRGB(10, 10, 15),
+    Bg = Color3.fromRGB(10, 10, 14),
     CardBg = Color3.fromRGB(16, 16, 22),
-    White = Color3.fromRGB(250, 250, 255),
-    Muted = Color3.fromRGB(140, 140, 160),
-    Border = Color3.fromRGB(45, 45, 60),
-    Success = Color3.fromRGB(40, 220, 120),
-    Danger = Color3.fromRGB(255, 60, 80)
+    White = Color3.fromRGB(245, 245, 255),
+    Muted = Color3.fromRGB(130, 130, 150),
+    Border = Color3.fromRGB(40, 40, 55),
+    Success = Color3.fromRGB(30, 210, 110),
+    Danger = Color3.fromRGB(255, 50, 70)
 }
 
 local Themes = {
@@ -48,7 +48,7 @@ local Themes = {
 }
 
 local CurrentTheme = Themes.Neon
-local ThemeObjects = { PrimaryText = {}, SecondaryText = {}, PrimaryBg = {}, SecondaryBg = {}, Stars = {}, Glows = {}, Strokes = {} }
+local ThemeObjects = { PrimaryText = {}, SecondaryText = {}, PrimaryBg = {}, SecondaryBg = {}, Stars = {}, Strokes = {} }
 
 local SG = Instance.new("ScreenGui")
 SG.Name = "HiroshiNexus"
@@ -58,7 +58,7 @@ SG.DisplayOrder = 10000
 SG.Parent = LP.PlayerGui
 
 -- ==========================================
--- 🌠 COSMIC BACKGROUND (BUG FREE)
+-- 🌠 COSMIC BACKGROUND
 -- ==========================================
 local CosmosBg = Instance.new("Frame", SG)
 CosmosBg.Size = UDim2.new(1, 0, 1, 0)
@@ -95,11 +95,12 @@ for i = 1, 120 do
     Instance.new("UICorner", star).CornerRadius = UDim.new(1, 0)
     
     table.insert(stars, {frame = star, speed = math.random(1, 10) / 100000})
-    table.insert(CosmosElements, {inst = star, prop = "BackgroundTransparency", base = baseTrans, isStar = true, baseSize = size})
+    table.insert(CosmosElements, {inst = star, prop = "BackgroundTransparency", base = baseTrans, isStar = true})
     if star.BackgroundColor3 ~= Color3.new(1,1,1) then table.insert(ThemeObjects.Stars, star) end
 end
 
 RS.RenderStepped:Connect(function()
+    if not MenuVisible then return end
     for _, s in ipairs(stars) do
         local newY = s.frame.Position.Y.Scale + s.speed
         if newY > 1 then newY = 0 end
@@ -108,7 +109,7 @@ RS.RenderStepped:Connect(function()
 end)
 
 -- ==========================================
--- 💻 MAIN WINDOW WRAPPER
+-- 💻 MAIN APPLICATION (UISCALE FIX)
 -- ==========================================
 local AppWrapper = Instance.new("Frame", SG)
 AppWrapper.Size = UDim2.new(0, 800, 0, 480)
@@ -116,6 +117,10 @@ AppWrapper.Position = UDim2.new(0.5, 0, 0.5, 0)
 AppWrapper.AnchorPoint = Vector2.new(0.5, 0.5)
 AppWrapper.BackgroundTransparency = 1
 AppWrapper.BorderSizePixel = 0
+
+-- L'arme secrète anti-bug : Le composant Scale
+local AppScale = Instance.new("UIScale", AppWrapper)
+AppScale.Scale = 1
 
 local AppGlow = Instance.new("ImageLabel", AppWrapper)
 AppGlow.Size = UDim2.new(1, 60, 1, 60)
@@ -141,7 +146,7 @@ WrapperStroke.Color = CurrentTheme.Secondary
 table.insert(ThemeObjects.Strokes, WrapperStroke)
 
 -- ==========================================
--- 🔐 LOGIN SCREEN 
+-- 🔐 LOGIN SCREEN (English Premium)
 -- ==========================================
 local LoginScreen = Instance.new("Frame", AppWindow)
 LoginScreen.Size = UDim2.new(1, 0, 1, 0)
@@ -276,6 +281,7 @@ TabSettingsBtn.TextColor3 = BaseColors.Muted
 TabSettingsBtn.TextXAlignment = Enum.TextXAlignment.Left
 Instance.new("UICorner", TabSettingsBtn).CornerRadius = UDim.new(0, 8)
 
+-- Profile
 local ProfileCard = Instance.new("Frame", Sidebar)
 ProfileCard.Size = UDim2.new(1, -20, 0, 60)
 ProfileCard.Position = UDim2.new(0, 10, 1, -75)
@@ -368,7 +374,7 @@ local EDesc = Instance.new("TextLabel", EngineCard)
 EDesc.Size = UDim2.new(1, -40, 0, 40)
 EDesc.Position = UDim2.new(0, 20, 0, 45)
 EDesc.BackgroundTransparency = 1
-EDesc.Text = "Real-time 3D environment analysis for absolute and undetectable spatial locking. (Stream-Proof Active)"
+EDesc.Text = "Real-time 3D environment analysis for absolute and undetectable spatial locking."
 EDesc.Font = Enum.Font.Gotham
 EDesc.TextSize = 11
 EDesc.TextColor3 = BaseColors.Muted
@@ -534,6 +540,7 @@ local TGrid = Instance.new("UIGridLayout", ThemeGrid)
 TGrid.CellSize = UDim2.new(0.23, 0, 1, 0)
 TGrid.CellPadding = UDim2.new(0.02, 0, 0, 0)
 
+-- Security Module Display (Fake but Pro)
 local SecCard = Instance.new("Frame", SettingsTab)
 SecCard.Size = UDim2.new(1, -40, 0, 130)
 SecCard.Position = UDim2.new(0, 20, 0, 195)
@@ -574,8 +581,9 @@ local function CreateSecItem(y, text, status)
 end
 CreateSecItem(50, "Memory Hook Protection", "ACTIVE")
 CreateSecItem(75, "Anti-Cheat Bypass (v4.2)", "INJECTED")
-CreateSecItem(100, "StreamProof Hiding", "ENABLED")
+CreateSecItem(100, "StreamProof Engine (CTRL key)", "ENABLED")
 
+-- Discord Card
 local DCard = Instance.new("Frame", SettingsTab)
 DCard.Size = UDim2.new(1, -40, 0, 80)
 DCard.Position = UDim2.new(0, 20, 0, 340)
@@ -686,7 +694,7 @@ end
 DiscordBtn.MouseButton1Click:Connect(function() CopyLink(DiscordBtn) end)
 CopyBtn.MouseButton1Click:Connect(function() CopyLink(CopyBtn) end)
 
--- BUG-FREE LOGIN ANIMATION
+-- BUG-FREE LOGIN (SNAP TRANSITION)
 AuthBtn.MouseButton1Click:Connect(function()
     AuthBtn.Text = "Authenticating..."
     StatusTxt.Text = "Checking license signature..."
@@ -700,17 +708,9 @@ AuthBtn.MouseButton1Click:Connect(function()
         AuthBtn.Text = "Connected"
         task.wait(0.3)
         
-        -- Animation "Snap" propre sans dépasser
-        local t = TS:Create(LoginCard, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 320, 0, 340)})
-        t:Play()
-        t.Completed:Wait()
-        
-        LoginScreen:Destroy() -- Détruit définitivement l'écran de login pour éviter TOUT bug graphique
-        
+        -- Animation d'effacement simple pour éviter TOUT bug UIStroke
+        LoginScreen.Visible = false
         MainContent.Visible = true
-        MainContent.Size = UDim2.new(1, -20, 1, -20)
-        TS:Create(MainContent, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(1, 0, 1, 0)}):Play()
-        
         IsAuthenticated = true
         
         AddLog("[SYS] Boot sequence complete.", BaseColors.Success)
@@ -764,39 +764,54 @@ RS.RenderStepped:Connect(function()
     end
 end)
 
--- 🛡️ STREAM PROOF (BUG-FREE CTRL HIDE)
+-- 💥 SINGULARITY ANIMATION (UISCALE ANTI-BUG)
+local function PlaySingularity(showing)
+    if IsAnimating then return end
+    IsAnimating = true
+    local cosmosInfo = TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+
+    if showing then
+        MenuVisible = true
+        AppWrapper.Visible = true
+        AppScale.Scale = 0
+        
+        TS:Create(AppScale, TweenInfo.new(0.8, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), {Scale = 1}):Play()
+
+        for _, item in ipairs(CosmosElements) do
+            local props = {}
+            props[item.prop] = item.base
+            TS:Create(item.inst, cosmosInfo, props):Play()
+        end
+        task.wait(0.8)
+        IsAnimating = false
+    else
+        TS:Create(AppScale, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {Scale = 0}):Play()
+        
+        for _, item in ipairs(CosmosElements) do
+            local props = {}
+            props[item.prop] = 1 
+            TS:Create(item.inst, cosmosInfo, props):Play()
+        end
+        task.wait(0.5)
+        AppWrapper.Visible = false
+        MenuVisible = false
+        IsAnimating = false
+    end
+end
+
 UIS.InputBegan:Connect(function(i, g)
     if g then return end
     if i.KeyCode == Enum.KeyCode.X and IsAuthenticated then
         ToggleAimbot()
     elseif (i.KeyCode == Enum.KeyCode.LeftControl or i.KeyCode == Enum.KeyCode.RightControl) then
-        if IsAnimating then return end
-        IsAnimating = true
-        MenuVisible = not MenuVisible
-        
-        if MenuVisible then
-            AppWrapper.Visible = true
-            CosmosBg.Visible = true
-            AppWrapper.Size = UDim2.new(0, 750, 0, 450)
-            TS:Create(AppWrapper, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 800, 0, 480)}):Play()
-            task.wait(0.4)
-            IsAnimating = false
-        else
-            -- Rétrécit très légèrement puis se désactive (Empêche le UIStroke Bug !)
-            local t = TS:Create(AppWrapper, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 750, 0, 450)})
-            t:Play()
-            t.Completed:Wait()
-            AppWrapper.Visible = false
-            CosmosBg.Visible = false
-            IsAnimating = false
-        end
+        PlaySingularity(not MenuVisible)
     elseif i.KeyCode == Enum.KeyCode.Delete then 
         SG:Destroy()
     end
 end)
 
 -- ==========================================
--- 🎯 A.I. MATH ENGINE (Pure Precision)
+-- 🎯 MOTEUR IA (Précision Mathématique Pure)
 -- ==========================================
 local IGNORE = {
     floorcollider=true, cursor_trail=true, baseplate=true, screen=true,
