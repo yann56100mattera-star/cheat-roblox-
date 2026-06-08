@@ -1,7 +1,7 @@
 --[[
     =======================================================================
     🌌 IA NEXUS - BY HIROSHI738
-    💎 Furtivité Absolue | Cosmos Dynamique & Nébuleuses | SaaS Premium
+    💎 Séquence de Singularité (Animation Cinématique) | SaaS Premium
     =======================================================================
 ]]
 
@@ -18,6 +18,7 @@ local AutoHit = false
 local TotalHits = 0
 local MenuVisible = true
 local IsAuthenticated = false
+local IsAnimating = false -- Sécurité pour empêcher de spammer la touche
 
 if LP.PlayerGui:FindFirstChild("HiroshiNeuralOS") then 
     LP.PlayerGui.HiroshiNeuralOS:Destroy() 
@@ -29,7 +30,6 @@ end
 local Theme = {
     DeepSpace = Color3.fromRGB(5, 5, 8),
     CardBg = Color3.fromRGB(14, 14, 20),
-    CardHover = Color3.fromRGB(20, 20, 28),
     Cyan = Color3.fromRGB(0, 225, 255),
     Purple = Color3.fromRGB(150, 60, 255),
     TextWhite = Color3.fromRGB(250, 250, 255),
@@ -47,16 +47,16 @@ SG.DisplayOrder = 10000
 SG.Parent = LP.PlayerGui
 
 -- ==========================================
--- 🌠 MOTEUR COSMIQUE (ÉTOILES & NÉBULEUSES)
+-- 🌠 MOTEUR COSMIQUE & VFX
 -- ==========================================
 local CosmosBg = Instance.new("Frame", SG)
 CosmosBg.Size = UDim2.new(1, 0, 1, 0)
 CosmosBg.BackgroundTransparency = 1
 CosmosBg.ZIndex = -10
 
-local CosmosElements = {} -- Stocke les éléments pour le fondu (Fade In/Out)
+local CosmosElements = {} -- Mémoire des états pour les animations
 
--- 1. Nébuleuses (Nuages spatiaux)
+-- 1. Nébuleuses
 local function CreateNebula(color, pos, size, baseTrans)
     local nebula = Instance.new("ImageLabel", CosmosBg)
     nebula.Size = size
@@ -66,13 +66,12 @@ local function CreateNebula(color, pos, size, baseTrans)
     nebula.Image = "rbxassetid://5028857084"
     nebula.ImageColor3 = color
     nebula.ImageTransparency = baseTrans
-    table.insert(CosmosElements, {inst = nebula, prop = "ImageTransparency", base = baseTrans})
+    table.insert(CosmosElements, {inst = nebula, prop = "ImageTransparency", base = baseTrans, isStar = false})
 end
-
 CreateNebula(Theme.Purple, UDim2.new(0.2, 0, 0.3, 0), UDim2.new(0, 800, 0, 800), 0.6)
 CreateNebula(Theme.Cyan, UDim2.new(0.8, 0, 0.7, 0), UDim2.new(0, 900, 0, 900), 0.7)
 
--- 2. Champ d'étoiles
+-- 2. Étoiles
 local stars = {}
 for i = 1, 150 do
     local star = Instance.new("Frame", CosmosBg)
@@ -86,39 +85,33 @@ for i = 1, 150 do
     Instance.new("UICorner", star).CornerRadius = UDim.new(1, 0)
     
     table.insert(stars, {frame = star, speed = math.random(1, 10) / 100000})
-    table.insert(CosmosElements, {inst = star, prop = "BackgroundTransparency", base = baseTrans})
+    table.insert(CosmosElements, {inst = star, prop = "BackgroundTransparency", base = baseTrans, isStar = true, baseSize = size})
 end
 
 RS.RenderStepped:Connect(function()
-    -- Les étoiles bougent toujours, mais sont invisibles si le menu est caché
     for _, s in ipairs(stars) do
         local newY = s.frame.Position.Y.Scale + s.speed
         if newY > 1 then newY = 0 end
         s.frame.Position = UDim2.new(s.frame.Position.X.Scale, 0, newY, 0)
     end
     
-    if not MenuVisible then return end
-    
-    -- Étoiles filantes
-    if math.random(1, 250) == 1 then
-        local fs = Instance.new("Frame", CosmosBg)
-        fs.Size = UDim2.new(0, 40, 0, 2)
-        fs.Position = UDim2.new(math.random(), 0, 0, -50)
-        fs.BackgroundColor3 = Theme.Cyan
-        fs.BorderSizePixel = 0
-        fs.Rotation = 45
-        
-        TS:Create(fs, TweenInfo.new(0.8, Enum.EasingStyle.Linear), {
-            Position = UDim2.new(fs.Position.X.Scale - 0.2, 0, 1.2, 0),
-            BackgroundTransparency = 1
-        }):Play()
-        game.Debris:AddItem(fs, 1)
+    if MenuVisible and not IsAnimating then
+        if math.random(1, 200) == 1 then
+            local fs = Instance.new("Frame", CosmosBg)
+            fs.Size = UDim2.new(0, 40, 0, 2)
+            fs.Position = UDim2.new(math.random(), 0, 0, -50)
+            fs.BackgroundColor3 = Theme.Cyan
+            fs.BorderSizePixel = 0
+            fs.Rotation = 45
+            TS:Create(fs, TweenInfo.new(0.8, Enum.EasingStyle.Linear), {Position = UDim2.new(fs.Position.X.Scale - 0.2, 0, 1.2, 0), BackgroundTransparency = 1}):Play()
+            game.Debris:AddItem(fs, 1)
+        end
     end
 end)
 
--- Curseur Spatial (Traînée)
+-- Curseur Spatial (S'arrête net quand on cache le menu)
 RS.RenderStepped:Connect(function()
-    if not MenuVisible then return end
+    if not MenuVisible or IsAnimating then return end
     
     local mouseLoc = UIS:GetMouseLocation()
     if math.random(1, 2) == 1 then
@@ -131,15 +124,37 @@ RS.RenderStepped:Connect(function()
         
         TS:Create(p, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
             Position = UDim2.new(0, p.Position.X.Offset, 0, p.Position.Y.Offset + 20),
-            BackgroundTransparency = 1,
-            Size = UDim2.new(0, 0, 0, 0)
+            BackgroundTransparency = 1, Size = UDim2.new(0, 0, 0, 0)
         }):Play()
         game.Debris:AddItem(p, 0.6)
     end
 end)
 
 -- ==========================================
--- 💻 CONTENEUR LOGICIEL (App Window)
+-- ✨ EFFETS SPÉCIAUX DE TRANSITION (Singularité)
+-- ==========================================
+local SingularityCore = Instance.new("ImageLabel", SG)
+SingularityCore.Size = UDim2.new(0, 0, 0, 0)
+SingularityCore.Position = UDim2.new(0.5, 0, 0.5, 0)
+SingularityCore.AnchorPoint = Vector2.new(0.5, 0.5)
+SingularityCore.BackgroundTransparency = 1
+SingularityCore.Image = "rbxassetid://5028857084"
+SingularityCore.ImageColor3 = Theme.Cyan
+SingularityCore.ImageTransparency = 1
+SingularityCore.ZIndex = 50
+
+local SingularityWave = Instance.new("ImageLabel", SG)
+SingularityWave.Size = UDim2.new(0, 0, 0, 0)
+SingularityWave.Position = UDim2.new(0.5, 0, 0.5, 0)
+SingularityWave.AnchorPoint = Vector2.new(0.5, 0.5)
+SingularityWave.BackgroundTransparency = 1
+SingularityWave.Image = "rbxassetid://5028857084"
+SingularityWave.ImageColor3 = Theme.Purple
+SingularityWave.ImageTransparency = 1
+SingularityWave.ZIndex = 49
+
+-- ==========================================
+-- 💻 CONTENEUR LOGICIEL 
 -- ==========================================
 local AppWindow = Instance.new("Frame", SG)
 AppWindow.Size = UDim2.new(0, 850, 0, 500)
@@ -162,10 +177,9 @@ AppGlow.Image = "rbxassetid://5028857084"
 AppGlow.ImageColor3 = Theme.Purple
 AppGlow.ImageTransparency = 0.6
 AppGlow.ZIndex = -1
-table.insert(CosmosElements, {inst = AppGlow, prop = "ImageTransparency", base = 0.6})
 
 -- ==========================================
--- 🔐 ÉCRAN DE CONNEXION
+-- 🔐 ÉCRAN DE CONNEXION (Simplifié dans le code pour la longueur)
 -- ==========================================
 local LoginScreen = Instance.new("Frame", AppWindow)
 LoginScreen.Size = UDim2.new(1, 0, 1, 0)
@@ -216,8 +230,6 @@ PassInput.Font = Enum.Font.Gotham
 PassInput.TextSize = 13
 PassInput.TextColor3 = Theme.TextWhite
 PassInput.TextXAlignment = Enum.TextXAlignment.Left
-PassInput.Focused:Connect(function() TS:Create(InputStroke, TweenInfo.new(0.3), {Color = Theme.Cyan}):Play() end)
-PassInput.FocusLost:Connect(function() TS:Create(InputStroke, TweenInfo.new(0.3), {Color = Theme.Border}):Play() end)
 
 local AuthBtn = Instance.new("TextButton", LoginCard)
 AuthBtn.Size = UDim2.new(1, -80, 0, 45)
@@ -237,18 +249,8 @@ StatusTxt.Text = ""
 StatusTxt.Font = Enum.Font.Gotham
 StatusTxt.TextSize = 12
 
-local DiscordBtn = Instance.new("TextButton", LoginCard)
-DiscordBtn.Size = UDim2.new(1, -80, 0, 45)
-DiscordBtn.Position = UDim2.new(0, 40, 1, -70)
-DiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
-DiscordBtn.Text = "Rejoindre le Discord Officiel"
-DiscordBtn.Font = Enum.Font.GothamBold
-DiscordBtn.TextSize = 13
-DiscordBtn.TextColor3 = Theme.TextWhite
-Instance.new("UICorner", DiscordBtn).CornerRadius = UDim.new(0, 8)
-
 -- ==========================================
--- 🎛️ DASHBOARD (SaaS Interface)
+-- 🎛️ DASHBOARD
 -- ==========================================
 local DashScreen = Instance.new("Frame", AppWindow)
 DashScreen.Size = UDim2.new(1, 0, 1, 0)
@@ -338,7 +340,6 @@ EngineCard.Position = UDim2.new(0, 0, 0, 80)
 EngineCard.BackgroundColor3 = Theme.CardBg
 Instance.new("UICorner", EngineCard).CornerRadius = UDim.new(0, 12)
 Instance.new("UIStroke", EngineCard).Color = Theme.Border
-
 local ETitle = Instance.new("TextLabel", EngineCard)
 ETitle.Size = UDim2.new(1, -40, 0, 30)
 ETitle.Position = UDim2.new(0, 20, 0, 20)
@@ -390,7 +391,6 @@ local StatContainer = Instance.new("Frame", CenterCol)
 StatContainer.Size = UDim2.new(1, 0, 0, 110)
 StatContainer.Position = UDim2.new(0, 0, 0, 280)
 StatContainer.BackgroundTransparency = 1
-
 local StatCard1 = Instance.new("Frame", StatContainer)
 StatCard1.Size = UDim2.new(0.48, 0, 1, 0)
 StatCard1.BackgroundColor3 = Theme.CardBg
@@ -436,101 +436,10 @@ AccDisplay.Font = Enum.Font.GothamBlack
 AccDisplay.TextSize = 28
 AccDisplay.TextColor3 = Theme.Purple
 
-local RightCol = Instance.new("Frame", DashScreen)
-RightCol.Size = UDim2.new(0, 210, 1, 0)
-RightCol.Position = UDim2.new(0, 620, 0, 0)
-RightCol.BackgroundTransparency = 1
-
-local ConsoleCard = Instance.new("Frame", RightCol)
-ConsoleCard.Size = UDim2.new(1, 0, 0, 260)
-ConsoleCard.Position = UDim2.new(0, 0, 0, 80)
-ConsoleCard.BackgroundColor3 = Theme.CardBg
-Instance.new("UICorner", ConsoleCard).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", ConsoleCard).Color = Theme.Border
-local CTitle = Instance.new("TextLabel", ConsoleCard)
-CTitle.Size = UDim2.new(1, -30, 0, 30)
-CTitle.Position = UDim2.new(0, 15, 0, 15)
-CTitle.BackgroundTransparency = 1
-CTitle.Text = "Console Nexus"
-CTitle.Font = Enum.Font.GothamBold
-CTitle.TextSize = 13
-CTitle.TextColor3 = Theme.TextWhite
-CTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-local LogContainer = Instance.new("ScrollingFrame", ConsoleCard)
-LogContainer.Size = UDim2.new(1, -30, 1, -60)
-LogContainer.Position = UDim2.new(0, 15, 0, 50)
-LogContainer.BackgroundTransparency = 1
-LogContainer.BorderSizePixel = 0
-LogContainer.ScrollBarThickness = 2
-local UIListLog = Instance.new("UIListLayout", LogContainer)
-UIListLog.Padding = UDim.new(0, 8)
-
-local function AddLog(text, color)
-    local log = Instance.new("TextLabel", LogContainer)
-    log.Size = UDim2.new(1, 0, 0, 15)
-    log.BackgroundTransparency = 1
-    log.Text = text
-    log.Font = Enum.Font.Code
-    log.TextSize = 10
-    log.TextColor3 = color or Theme.TextMuted
-    log.TextXAlignment = Enum.TextXAlignment.Left
-    log.TextWrapped = true
-end
-AddLog("[SYS] Boot sequence complete.", Theme.Success)
-AddLog("[SYS] By Hiroshi738 Loaded.", Theme.TextMuted)
-AddLog("[NET] Connected to Nexus Server.", Theme.Cyan)
-
-local DCard = Instance.new("Frame", RightCol)
-DCard.Size = UDim2.new(1, 0, 0, 110)
-DCard.Position = UDim2.new(0, 0, 0, 360)
-DCard.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
-Instance.new("UICorner", DCard).CornerRadius = UDim.new(0, 12)
-local DTitle = Instance.new("TextLabel", DCard)
-DTitle.Size = UDim2.new(1, 0, 0, 20)
-DTitle.Position = UDim2.new(0, 0, 0, 20)
-DTitle.BackgroundTransparency = 1
-DTitle.Text = "Communauté"
-DTitle.Font = Enum.Font.GothamBold
-DTitle.TextSize = 14
-DTitle.TextColor3 = Color3.new(1,1,1)
-local CopyBtn = Instance.new("TextButton", DCard)
-CopyBtn.Size = UDim2.new(0, 140, 0, 35)
-CopyBtn.Position = UDim2.new(0.5, -70, 0, 55)
-CopyBtn.BackgroundColor3 = Color3.fromRGB(70, 80, 200)
-CopyBtn.Text = "Rejoindre le Discord"
-CopyBtn.Font = Enum.Font.GothamBold
-CopyBtn.TextSize = 11
-CopyBtn.TextColor3 = Color3.new(1,1,1)
-Instance.new("UICorner", CopyBtn).CornerRadius = UDim.new(0, 8)
-
 -- ==========================================
--- 🔄 LOGIQUE, ANIMATIONS & FURTIVITÉ
+-- 🚀 CINÉMATIQUES & LOGIQUE
 -- ==========================================
 
--- Clic Discord
-local function CopyLink(btn)
-    if setclipboard then
-        setclipboard(DISCORD_LINK)
-        btn.Text = "Lien Copié !"
-        btn.BackgroundColor3 = Theme.Success
-        task.wait(2)
-        btn.Text = "Rejoindre le Discord"
-        btn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
-    end
-end
-DiscordBtn.MouseButton1Click:Connect(function() CopyLink(DiscordBtn) end)
-CopyBtn.MouseButton1Click:Connect(function() CopyLink(CopyBtn) end)
-
--- Animation de bouton
-local function AddHover(btn)
-    local orig = btn.Size
-    btn.MouseEnter:Connect(function() TS:Create(btn, TweenInfo.new(0.2), {Size = UDim2.new(orig.X.Scale, orig.X.Offset*1.02, orig.Y.Scale, orig.Y.Offset*1.02)}):Play() end)
-    btn.MouseLeave:Connect(function() TS:Create(btn, TweenInfo.new(0.2), {Size = orig}):Play() end)
-end
-AddHover(AuthBtn) AddHover(DiscordBtn) AddHover(CopyBtn)
-
--- LOGIQUE CONNEXION
 AuthBtn.MouseButton1Click:Connect(function()
     AuthBtn.Text = "Vérification..."
     StatusTxt.Text = "Analyse de la signature Nexus..."
@@ -548,7 +457,6 @@ AuthBtn.MouseButton1Click:Connect(function()
         LoginScreen.Visible = false
         TS:Create(DashScreen, TweenInfo.new(0.8, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
         IsAuthenticated = true
-        AddLog("[NEXUS] Engine ready for deployment.", Theme.Purple)
     else
         StatusTxt.Text = "Erreur : Licence invalide."
         StatusTxt.TextColor3 = Theme.Danger
@@ -562,7 +470,6 @@ AuthBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- LOGIQUE IA
 ToggleBtn.MouseButton1Click:Connect(function()
     if not IsAuthenticated then return end
     AutoHit = not AutoHit
@@ -572,21 +479,13 @@ ToggleBtn.MouseButton1Click:Connect(function()
     TS:Create(ToggleKnob, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = endPos, BackgroundColor3 = endKnob}):Play()
     TS:Create(ToggleBg, TweenInfo.new(0.3), {BackgroundColor3 = endBg}):Play()
     TS:Create(ToggleStroke, TweenInfo.new(0.3), {Color = AutoHit and Theme.Cyan or Theme.Border}):Play()
-    if AutoHit then
-        TS:Create(EngineCard.UIStroke, TweenInfo.new(0.3), {Color = Theme.Cyan}):Play()
-        AddLog("[NEXUS] Tracking system ACTIVATED.", Theme.Success)
-    else
-        TS:Create(EngineCard.UIStroke, TweenInfo.new(0.3), {Color = Theme.Border}):Play()
-        AddLog("[NEXUS] Tracking system OFFLINE.", Theme.Danger)
-    end
+    if AutoHit then TS:Create(EngineCard.UIStroke, TweenInfo.new(0.3), {Color = Theme.Cyan}):Play()
+    else TS:Create(EngineCard.UIStroke, TweenInfo.new(0.3), {Color = Theme.Border}):Play() end
 end)
 
--- Dragging
 local dragging, dragInput, dragStart, startPos
 AppWindow.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true dragStart = input.Position startPos = AppWindow.Position
-    end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true dragStart = input.Position startPos = AppWindow.Position end
 end)
 UIS.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
@@ -601,33 +500,86 @@ RS.RenderStepped:Connect(function()
     end
 end)
 
--- 🛡️ GESTION DU MODE FURTIF (STREAM-PROOF ABSOLU)
-local function SetCosmosState(visible)
-    for _, item in ipairs(CosmosElements) do
-        local targetVal = visible and item.base or 1
-        local tweenInfo = TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
-        local props = {}
-        props[item.prop] = targetVal
-        TS:Create(item.inst, tweenInfo, props):Play()
+-- ==========================================
+-- 💥 MOTEUR DE SINGULARITÉ (LA TRANSITION PREMIUM)
+-- ==========================================
+local function PlaySingularity(showing)
+    if IsAnimating then return end
+    IsAnimating = true
+    
+    local animSpeed = 0.8
+    local cosmosInfo = TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+
+    if showing then
+        MenuVisible = true
+        AppWindow.Visible = true
+        
+        -- 1. Explosion d'énergie (Big Bang)
+        SingularityCore.Size = UDim2.new(0, 0, 0, 0)
+        SingularityCore.ImageTransparency = 0
+        
+        local boom = TS:Create(SingularityCore, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 600, 0, 600), ImageTransparency = 1
+        })
+        boom:Play()
+        
+        -- 2. Expansion Elastique du Menu
+        AppWindow.Size = UDim2.new(0, 0, 0, 0)
+        TS:Create(AppWindow, TweenInfo.new(1, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, 850, 0, 500)
+        }):Play()
+
+        -- 3. Rallumage du Cosmos
+        for _, item in ipairs(CosmosElements) do
+            local props = {}
+            props[item.prop] = item.base
+            if item.isStar then props.Size = UDim2.new(0, item.baseSize, 0, item.baseSize) end
+            TS:Create(item.inst, cosmosInfo, props):Play()
+        end
+        
+        task.wait(1)
+        IsAnimating = false
+    else
+        -- 1. Contraction (Aspiration par trou noir)
+        -- Effet de distorsion : on réduit la fenêtre avec un effet exponentiel puissant
+        local collapse = TS:Create(AppWindow, TweenInfo.new(animSpeed, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {
+            Size = UDim2.new(0, 0, 0, 0)
+        })
+        collapse:Play()
+        
+        -- 2. Dissipation spatiale (Le cosmos s'éteint et les étoiles s'éloignent)
+        for _, item in ipairs(CosmosElements) do
+            local props = {}
+            props[item.prop] = 1
+            if item.isStar then props.Size = UDim2.new(0, 0, 0, 0) end
+            TS:Create(item.inst, cosmosInfo, props):Play()
+        end
+
+        collapse.Completed:Wait()
+        AppWindow.Visible = false
+        
+        -- 3. Implosion finale (Onde de choc)
+        SingularityWave.Size = UDim2.new(0, 400, 0, 400)
+        SingularityWave.ImageTransparency = 0.2
+        
+        local implode = TS:Create(SingularityWave, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            Size = UDim2.new(0, 0, 0, 0), ImageTransparency = 1
+        })
+        implode:Play()
+        implode.Completed:Wait()
+
+        MenuVisible = false
+        IsAnimating = false
     end
 end
 
+-- Raccourcis Clavier
 UIS.InputBegan:Connect(function(i, g)
     if g then return end
     if i.KeyCode == Enum.KeyCode.X and IsAuthenticated then
         ToggleBtn.MouseButton1Click:Fire()
     elseif (i.KeyCode == Enum.KeyCode.LeftControl or i.KeyCode == Enum.KeyCode.RightControl) then
-        MenuVisible = not MenuVisible
-        SetCosmosState(MenuVisible) -- Anime les étoiles/nébuleuses pour qu'elles apparaissent/disparaissent
-        
-        if MenuVisible then
-            AppWindow.Visible = true
-            TS:Create(AppWindow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Size = UDim2.new(0, 850, 0, 500)}):Play()
-        else
-            local t = TS:Create(AppWindow, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 800, 0, 450)})
-            t:Play()
-            task.delay(0.4, function() if not MenuVisible then AppWindow.Visible = false end end)
-        end
+        PlaySingularity(not MenuVisible)
     elseif i.KeyCode == Enum.KeyCode.Delete then 
         SG:Destroy()
     end
@@ -651,9 +603,7 @@ local function getCursor()
         local g = workspace:FindFirstChild("Client")
         if g and g:FindFirstChild("Game") then
             for _,v in ipairs(g.Game:GetChildren()) do
-                if v.Name == "Cursor" and v:IsA("BasePart") then
-                    cachedCursor = v break
-                end
+                if v.Name == "Cursor" and v:IsA("BasePart") then cachedCursor = v break end
             end
         end
     end)
@@ -681,26 +631,10 @@ RS.RenderStepped:Connect(function()
     local notes = {}
     pcall(function()
         local gf = workspace.Client.Game
-        for _,v in ipairs(gf:GetChildren()) do
-            if v:IsA("BasePart") and v ~= cursor and v.Transparency < 0.9 then
+        for _,v in ipairs(gf:GetDescendants()) do
+            if v:IsA("BasePart") and v ~= cursor and v.Transparency < 0.9 and v.Size.X <= 6 then
                 local nm = v.Name:lower()
-                if not IGNORE[nm] and not nm:find("cursor") and not nm:find("particle")
-                   and not nm:find("emitter") and not nm:find("beat") and not nm:find("light")
-                   and not nm:find("camera") and not nm:find("song") and not nm:find("lobby")
-                   and not nm:find("status") and not nm:find("mod") and not nm:find("spec")
-                   and not nm:find("fade") and not nm:find("spawn") then
-                    if v.Size.X <= 6 and v.Size.Y <= 6 and v.Size.Z <= 6 then table.insert(notes, v) end
-                end
-            end
-        end
-        for _,folder in ipairs(gf:GetChildren()) do
-            if folder:IsA("Folder") or folder:IsA("Model") then
-                local fn = folder.Name:lower()
-                if fn ~= "scores" and fn ~= "spawneffects" and fn ~= "noteeffects" then
-                    for _,v in ipairs(folder:GetDescendants()) do
-                        if v:IsA("BasePart") and v.Transparency < 0.9 and v.Size.X <= 6 then table.insert(notes, v) end
-                    end
-                end
+                if not IGNORE[nm] and not nm:find("cursor") and not nm:find("particle") then table.insert(notes, v) end
             end
         end
     end)
@@ -718,9 +652,7 @@ RS.RenderStepped:Connect(function()
     local targetStillExists = false
     if currentTarget then
         for _, s in ipairs(scored) do
-            if s.part == currentTarget then
-                targetStillExists = true break
-            end
+            if s.part == currentTarget then targetStillExists = true break end
         end
     end
 
@@ -738,12 +670,8 @@ RS.RenderStepped:Connect(function()
     cursorX = cursorX + (target.sx - cursorX) * speed
     cursorY = cursorY + (target.sy - cursorY) * speed
 
-    local mousePos = UIS:GetMouseLocation()
-    local dx = cursorX - mousePos.X
-    local dy = cursorY - mousePos.Y
-
     if typeof(mousemoverel) == "function" then
-        mousemoverel(dx, dy)
+        mousemoverel(cursorX - UIS:GetMouseLocation().X, cursorY - UIS:GetMouseLocation().Y)
     end
 
     if math.sqrt((cursorX - target.sx)^2 + (cursorY - target.sy)^2) < 5 then
