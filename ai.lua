@@ -1,7 +1,7 @@
 --[[
     =======================================================================
-    🌌 IA NEXUS - BY HIROSHI738 (ULTIMATE EDITION)
-    💎 Design v4 (Discord/Gradients) + Animation Singularité (Ctrl)
+    🌌 IA NEXUS - BY HIROSHI738 (STABLE EDITION)
+    💎 Interface Complète | Zéro Bug | Furtivité Instantanée
     =======================================================================
 ]]
 
@@ -14,11 +14,11 @@ local Cam = workspace.CurrentCamera
 
 local DISCORD_LINK = "https://discord.gg/qTGtM4Uyc"
 local PASSWORD = "Hiro738"
+
 local AutoHit = false
 local TotalHits = 0
 local MenuVisible = true
 local IsAuthenticated = false
-local IsAnimating = false 
 
 if LP.PlayerGui:FindFirstChild("HiroshiNexus") then 
     LP.PlayerGui.HiroshiNexus:Destroy() 
@@ -28,13 +28,13 @@ end
 -- 🎨 PALETTE & DESIGN SYSTEM
 -- ==========================================
 local Theme = {
-    GlassBg = Color3.fromRGB(15, 15, 22),
-    SpaceBlack = Color3.fromRGB(8, 8, 12),
+    Bg = Color3.fromRGB(12, 12, 18),
     CardBg = Color3.fromRGB(18, 18, 26),
     Cyan = Color3.fromRGB(0, 225, 255),
     Purple = Color3.fromRGB(140, 60, 255),
-    TextWhite = Color3.fromRGB(250, 250, 255),
-    TextMuted = Color3.fromRGB(140, 140, 160),
+    White = Color3.fromRGB(250, 250, 255),
+    Muted = Color3.fromRGB(140, 140, 160),
+    Border = Color3.fromRGB(40, 40, 55),
     Success = Color3.fromRGB(40, 220, 120),
     Danger = Color3.fromRGB(255, 60, 80)
 }
@@ -47,129 +47,53 @@ SG.DisplayOrder = 10000
 SG.Parent = LP.PlayerGui
 
 -- ==========================================
--- 🌠 MOTEUR COSMIQUE (ÉTOILES & NÉBULEUSES)
+-- 🌠 FOND COSMOS (Simple & Stable)
 -- ==========================================
 local CosmosBg = Instance.new("Frame", SG)
 CosmosBg.Size = UDim2.new(1, 0, 1, 0)
 CosmosBg.BackgroundTransparency = 1
 CosmosBg.ZIndex = -10
 
-local CosmosElements = {} 
-
-local function CreateNebula(color, pos, size, baseTrans)
-    local nebula = Instance.new("ImageLabel", CosmosBg)
-    nebula.Size = size
-    nebula.Position = pos
-    nebula.AnchorPoint = Vector2.new(0.5, 0.5)
-    nebula.BackgroundTransparency = 1
-    nebula.Image = "rbxassetid://5028857084"
-    nebula.ImageColor3 = color
-    nebula.ImageTransparency = baseTrans
-    table.insert(CosmosElements, {inst = nebula, prop = "ImageTransparency", base = baseTrans, isStar = false})
-end
-
-CreateNebula(Theme.Purple, UDim2.new(0.2, 0, 0.3, 0), UDim2.new(0, 800, 0, 800), 0.6)
-CreateNebula(Theme.Cyan, UDim2.new(0.8, 0, 0.7, 0), UDim2.new(0, 900, 0, 900), 0.7)
-
 local stars = {}
-for i = 1, 150 do
+for i = 1, 100 do
     local star = Instance.new("Frame", CosmosBg)
     local size = math.random(1, 3)
-    local baseTrans = math.random(20, 80) / 100
     star.Size = UDim2.new(0, size, 0, size)
     star.Position = UDim2.new(math.random(), 0, math.random(), 0)
-    star.BackgroundColor3 = (math.random(1, 5) == 1) and Theme.Cyan or Color3.new(1,1,1)
+    star.BackgroundColor3 = (math.random(1, 4) == 1) and Theme.Cyan or Color3.new(1,1,1)
     star.BorderSizePixel = 0
-    star.BackgroundTransparency = baseTrans
+    star.BackgroundTransparency = math.random(30, 80) / 100
     Instance.new("UICorner", star).CornerRadius = UDim.new(1, 0)
-    
-    table.insert(stars, {frame = star, speed = math.random(1, 10) / 100000})
-    table.insert(CosmosElements, {inst = star, prop = "BackgroundTransparency", base = baseTrans, isStar = true, baseSize = size})
+    table.insert(stars, {frame = star, speed = math.random(2, 15) / 100000})
 end
 
 RS.RenderStepped:Connect(function()
+    if not MenuVisible then return end
     for _, s in ipairs(stars) do
         local newY = s.frame.Position.Y.Scale + s.speed
         if newY > 1 then newY = 0 end
         s.frame.Position = UDim2.new(s.frame.Position.X.Scale, 0, newY, 0)
     end
-    
-    if MenuVisible and not IsAnimating then
-        if math.random(1, 200) == 1 then
-            local fs = Instance.new("Frame", CosmosBg)
-            fs.Size = UDim2.new(0, 40, 0, 2)
-            fs.Position = UDim2.new(math.random(), 0, 0, -50)
-            fs.BackgroundColor3 = Theme.Cyan
-            fs.BorderSizePixel = 0
-            fs.Rotation = 45
-            TS:Create(fs, TweenInfo.new(0.8, Enum.EasingStyle.Linear), {Position = UDim2.new(fs.Position.X.Scale - 0.2, 0, 1.2, 0), BackgroundTransparency = 1}):Play()
-            game.Debris:AddItem(fs, 1)
-        end
-    end
-end)
-
-RS.RenderStepped:Connect(function()
-    if not MenuVisible or IsAnimating then return end
-    local mouseLoc = UIS:GetMouseLocation()
-    if math.random(1, 2) == 1 then
-        local p = Instance.new("Frame", CosmosBg)
-        p.Size = UDim2.new(0, 4, 0, 4)
-        p.Position = UDim2.new(0, mouseLoc.X + math.random(-6, 6), 0, mouseLoc.Y + math.random(-6, 6))
-        p.BackgroundColor3 = (math.random(1, 2) == 1) and Theme.Cyan or Theme.Purple
-        p.BorderSizePixel = 0
-        Instance.new("UICorner", p).CornerRadius = UDim.new(1, 0)
-        
-        TS:Create(p, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Position = UDim2.new(0, p.Position.X.Offset, 0, p.Position.Y.Offset + 20),
-            BackgroundTransparency = 1, Size = UDim2.new(0, 0, 0, 0)
-        }):Play()
-        game.Debris:AddItem(p, 0.6)
-    end
 end)
 
 -- ==========================================
--- 💻 CONTENEUR PRINCIPAL (Correction du "Trait")
+-- 💻 CONTENEUR PRINCIPAL DE L'APPLICATION
 -- ==========================================
--- Le Wrapper gère la bordure et le glow
-local AppWrapper = Instance.new("Frame", SG)
-AppWrapper.Size = UDim2.new(0, 750, 0, 450)
-AppWrapper.Position = UDim2.new(0.5, 0, 0.5, 0)
-AppWrapper.AnchorPoint = Vector2.new(0.5, 0.5)
-AppWrapper.BackgroundTransparency = 1
-AppWrapper.BorderSizePixel = 0
-AppWrapper.ClipsDescendants = false
-
-local AppGlow = Instance.new("ImageLabel", AppWrapper)
-AppGlow.Size = UDim2.new(1, 60, 1, 60)
-AppGlow.Position = UDim2.new(0, -30, 0, -30)
-AppGlow.BackgroundTransparency = 1
-AppGlow.Image = "rbxassetid://5028857084"
-AppGlow.ImageColor3 = Theme.Purple
-AppGlow.ImageTransparency = 0.5
-AppGlow.ZIndex = -1
-table.insert(CosmosElements, {inst = AppGlow, prop = "ImageTransparency", base = 0.5, isStar = false})
-
-local WrapperStroke = Instance.new("UIStroke", AppWrapper)
-WrapperStroke.Thickness = 1.5
-local GradientStroke = Instance.new("UIGradient", WrapperStroke)
-GradientStroke.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Theme.Cyan),
-    ColorSequenceKeypoint.new(0.5, Theme.Purple),
-    ColorSequenceKeypoint.new(1, Theme.Cyan)
-}
-Instance.new("UICorner", AppWrapper).CornerRadius = UDim.new(0, 14)
-
--- La Window gère le contenu et coupe proprement ce qui dépasse (ClipsDescendants) sans buguer
-local AppWindow = Instance.new("Frame", AppWrapper)
-AppWindow.Size = UDim2.new(1, 0, 1, 0)
-AppWindow.BackgroundColor3 = Theme.GlassBg
-AppWindow.BackgroundTransparency = 0.1
+local AppWindow = Instance.new("Frame", SG)
+AppWindow.Size = UDim2.new(0, 800, 0, 450)
+AppWindow.Position = UDim2.new(0.5, 0, 0.5, 0)
+AppWindow.AnchorPoint = Vector2.new(0.5, 0.5)
+AppWindow.BackgroundColor3 = Theme.Bg
 AppWindow.BorderSizePixel = 0
 AppWindow.ClipsDescendants = true
-Instance.new("UICorner", AppWindow).CornerRadius = UDim.new(0, 14)
+Instance.new("UICorner", AppWindow).CornerRadius = UDim.new(0, 12)
+
+local AppStroke = Instance.new("UIStroke", AppWindow)
+AppStroke.Color = Theme.Purple
+AppStroke.Thickness = 1.5
 
 -- ==========================================
--- 🔐 ÉCRAN DE CONNEXION (Retour du Design V4)
+-- 🔐 ÉCRAN DE CONNEXION (LOGIN)
 -- ==========================================
 local LoginScreen = Instance.new("Frame", AppWindow)
 LoginScreen.Size = UDim2.new(1, 0, 1, 0)
@@ -182,7 +106,7 @@ LoginCard.Position = UDim2.new(0.5, 0, 0.5, 0)
 LoginCard.AnchorPoint = Vector2.new(0.5, 0.5)
 LoginCard.BackgroundColor3 = Theme.CardBg
 Instance.new("UICorner", LoginCard).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", LoginCard).Color = Color3.fromRGB(40, 40, 55)
+Instance.new("UIStroke", LoginCard).Color = Theme.Border
 
 local LTitle = Instance.new("TextLabel", LoginCard)
 LTitle.Size = UDim2.new(1, 0, 0, 40)
@@ -190,8 +114,8 @@ LTitle.Position = UDim2.new(0, 0, 0, 40)
 LTitle.BackgroundTransparency = 1
 LTitle.Text = "I A   N E X U S"
 LTitle.Font = Enum.Font.GothamBlack
-LTitle.TextSize = 26
-LTitle.TextColor3 = Theme.TextWhite
+LTitle.TextSize = 24
+LTitle.TextColor3 = Theme.White
 
 local LSub = Instance.new("TextLabel", LoginCard)
 LSub.Size = UDim2.new(1, 0, 0, 20)
@@ -205,10 +129,10 @@ LSub.TextColor3 = Theme.Cyan
 local InputBg = Instance.new("Frame", LoginCard)
 InputBg.Size = UDim2.new(1, -60, 0, 45)
 InputBg.Position = UDim2.new(0, 30, 0, 140)
-InputBg.BackgroundColor3 = Theme.SpaceBlack
+InputBg.BackgroundColor3 = Theme.Bg
 Instance.new("UICorner", InputBg).CornerRadius = UDim.new(0, 8)
 local InputStroke = Instance.new("UIStroke", InputBg)
-InputStroke.Color = Theme.Purple
+InputStroke.Color = Theme.Border
 
 local PassInput = Instance.new("TextBox", InputBg)
 PassInput.Size = UDim2.new(1, -20, 1, 0)
@@ -218,7 +142,7 @@ PassInput.Text = ""
 PassInput.PlaceholderText = "Saisissez votre clé Nexus"
 PassInput.Font = Enum.Font.Gotham
 PassInput.TextSize = 13
-PassInput.TextColor3 = Theme.TextWhite
+PassInput.TextColor3 = Theme.White
 PassInput.TextXAlignment = Enum.TextXAlignment.Left
 
 local DiscordBtn = Instance.new("TextButton", LoginCard)
@@ -228,7 +152,7 @@ DiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
 DiscordBtn.Text = "Discord"
 DiscordBtn.Font = Enum.Font.GothamBold
 DiscordBtn.TextSize = 13
-DiscordBtn.TextColor3 = Theme.TextWhite
+DiscordBtn.TextColor3 = Theme.White
 Instance.new("UICorner", DiscordBtn).CornerRadius = UDim.new(0, 8)
 
 local AuthBtn = Instance.new("TextButton", LoginCard)
@@ -238,7 +162,7 @@ AuthBtn.BackgroundColor3 = Theme.Cyan
 AuthBtn.Text = "Connexion"
 AuthBtn.Font = Enum.Font.GothamBold
 AuthBtn.TextSize = 13
-AuthBtn.TextColor3 = Theme.SpaceBlack
+AuthBtn.TextColor3 = Theme.Bg
 Instance.new("UICorner", AuthBtn).CornerRadius = UDim.new(0, 8)
 
 local StatusTxt = Instance.new("TextLabel", LoginCard)
@@ -254,21 +178,20 @@ StatusTxt.TextSize = 12
 -- ==========================================
 local DashScreen = Instance.new("Frame", AppWindow)
 DashScreen.Size = UDim2.new(1, 0, 1, 0)
-DashScreen.Position = UDim2.new(1, 0, 0, 0) 
 DashScreen.BackgroundTransparency = 1
-DashScreen.Visible = false -- Masqué par défaut pour empêcher le bug du trait
+DashScreen.Visible = false 
 
+-- SIDEBAR (Gauche)
 local Sidebar = Instance.new("Frame", DashScreen)
 Sidebar.Size = UDim2.new(0, 220, 1, 0)
-Sidebar.BackgroundColor3 = Theme.SpaceBlack
-Sidebar.BackgroundTransparency = 0.3
+Sidebar.BackgroundColor3 = Theme.CardBg
 Sidebar.BorderSizePixel = 0
+
 local SidebarLine = Instance.new("Frame", Sidebar)
 SidebarLine.Size = UDim2.new(0, 1, 1, 0)
 SidebarLine.Position = UDim2.new(1, 0, 0, 0)
-SidebarLine.BackgroundColor3 = Theme.Purple
+SidebarLine.BackgroundColor3 = Theme.Border
 SidebarLine.BorderSizePixel = 0
-SidebarLine.Transparency = 0.5
 
 local DLogo = Instance.new("TextLabel", Sidebar)
 DLogo.Size = UDim2.new(1, 0, 0, 80)
@@ -290,19 +213,23 @@ MenuTxt.BackgroundTransparency = 1
 MenuTxt.Text = "🧠 IA Nexus Core"
 MenuTxt.Font = Enum.Font.GothamBold
 MenuTxt.TextSize = 13
-MenuTxt.TextColor3 = Theme.TextWhite
+MenuTxt.TextColor3 = Theme.White
 
+-- Profil
 local ProfileCard = Instance.new("Frame", Sidebar)
 ProfileCard.Size = UDim2.new(1, -30, 0, 65)
 ProfileCard.Position = UDim2.new(0, 15, 1, -80)
-ProfileCard.BackgroundColor3 = Theme.SpaceBlack
+ProfileCard.BackgroundColor3 = Theme.Bg
 Instance.new("UICorner", ProfileCard).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", ProfileCard).Color = Theme.Border
+
 local Avatar = Instance.new("ImageLabel", ProfileCard)
 Avatar.Size = UDim2.new(0, 40, 0, 40)
 Avatar.Position = UDim2.new(0, 12, 0.5, -20)
 Avatar.BackgroundColor3 = Theme.CardBg
 Instance.new("UICorner", Avatar).CornerRadius = UDim.new(1, 0)
 Avatar.Image = "rbxthumb://type=AvatarHeadShot&id="..LP.UserId.."&w=48&h=48"
+
 local PName = Instance.new("TextLabel", ProfileCard)
 PName.Size = UDim2.new(1, -70, 0, 20)
 PName.Position = UDim2.new(0, 65, 0, 12)
@@ -310,8 +237,9 @@ PName.BackgroundTransparency = 1
 PName.Text = LP.Name
 PName.Font = Enum.Font.GothamBold
 PName.TextSize = 13
-PName.TextColor3 = Theme.TextWhite
+PName.TextColor3 = Theme.White
 PName.TextXAlignment = Enum.TextXAlignment.Left
+
 local PRank = Instance.new("TextLabel", ProfileCard)
 PRank.Size = UDim2.new(1, -70, 0, 15)
 PRank.Position = UDim2.new(0, 65, 0, 32)
@@ -322,17 +250,28 @@ PRank.TextSize = 11
 PRank.TextColor3 = Theme.Cyan
 PRank.TextXAlignment = Enum.TextXAlignment.Left
 
+-- COLONNE CENTRALE (Aimbot)
 local CenterCol = Instance.new("Frame", DashScreen)
-CenterCol.Size = UDim2.new(0, 330, 1, 0)
-CenterCol.Position = UDim2.new(0, 220, 0, 0)
+CenterCol.Size = UDim2.new(0, 340, 1, 0)
+CenterCol.Position = UDim2.new(0, 240, 0, 0)
 CenterCol.BackgroundTransparency = 1
 
+local HeaderTxt = Instance.new("TextLabel", CenterCol)
+HeaderTxt.Size = UDim2.new(1, 0, 0, 80)
+HeaderTxt.BackgroundTransparency = 1
+HeaderTxt.Text = "Vue d'Ensemble"
+HeaderTxt.Font = Enum.Font.GothamBold
+HeaderTxt.TextSize = 18
+HeaderTxt.TextColor3 = Theme.White
+HeaderTxt.TextXAlignment = Enum.TextXAlignment.Left
+
 local EngineCard = Instance.new("Frame", CenterCol)
-EngineCard.Size = UDim2.new(1, -20, 0, 160)
-EngineCard.Position = UDim2.new(0, 20, 0, 80)
+EngineCard.Size = UDim2.new(1, 0, 0, 170)
+EngineCard.Position = UDim2.new(0, 0, 0, 80)
 EngineCard.BackgroundColor3 = Theme.CardBg
 Instance.new("UICorner", EngineCard).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", EngineCard).Color = Color3.fromRGB(40, 40, 55)
+local EngineStroke = Instance.new("UIStroke", EngineCard)
+EngineStroke.Color = Theme.Border
 
 local ETitle = Instance.new("TextLabel", EngineCard)
 ETitle.Size = UDim2.new(1, -40, 0, 30)
@@ -341,8 +280,9 @@ ETitle.BackgroundTransparency = 1
 ETitle.Text = "Configuration IA Nexus"
 ETitle.Font = Enum.Font.GothamBold
 ETitle.TextSize = 15
-ETitle.TextColor3 = Theme.TextWhite
+ETitle.TextColor3 = Theme.White
 ETitle.TextXAlignment = Enum.TextXAlignment.Left
+
 local EDesc = Instance.new("TextLabel", EngineCard)
 EDesc.Size = UDim2.new(1, -40, 0, 40)
 EDesc.Position = UDim2.new(0, 20, 0, 50)
@@ -350,7 +290,7 @@ EDesc.BackgroundTransparency = 1
 EDesc.Text = "Analyse de l'environnement 3D en temps réel pour un verrouillage spatial absolu et indétectable."
 EDesc.Font = Enum.Font.Gotham
 EDesc.TextSize = 11
-EDesc.TextColor3 = Theme.TextMuted
+EDesc.TextColor3 = Theme.Muted
 EDesc.TextXAlignment = Enum.TextXAlignment.Left
 EDesc.TextWrapped = true
 
@@ -361,36 +301,36 @@ SwitchLbl.BackgroundTransparency = 1
 SwitchLbl.Text = "Activer l'I.A. (Touche X)"
 SwitchLbl.Font = Enum.Font.GothamMedium
 SwitchLbl.TextSize = 12
-SwitchLbl.TextColor3 = Theme.TextWhite
+SwitchLbl.TextColor3 = Theme.White
 SwitchLbl.TextXAlignment = Enum.TextXAlignment.Left
 
 local ToggleBg = Instance.new("Frame", EngineCard)
 ToggleBg.Size = UDim2.new(0, 50, 0, 26)
 ToggleBg.Position = UDim2.new(1, -70, 1, -50)
-ToggleBg.BackgroundColor3 = Theme.SpaceBlack
+ToggleBg.BackgroundColor3 = Theme.Bg
 Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(1, 0)
 local ToggleStroke = Instance.new("UIStroke", ToggleBg)
-ToggleStroke.Color = Color3.fromRGB(60, 60, 75)
+ToggleStroke.Color = Theme.Border
+
 local ToggleKnob = Instance.new("Frame", ToggleBg)
 ToggleKnob.Size = UDim2.new(0, 18, 0, 18)
 ToggleKnob.Position = UDim2.new(0, 4, 0.5, -9)
-ToggleKnob.BackgroundColor3 = Theme.TextWhite
+ToggleKnob.BackgroundColor3 = Theme.White
 Instance.new("UICorner", ToggleKnob).CornerRadius = UDim.new(1, 0)
+
 local ToggleBtn = Instance.new("TextButton", ToggleBg)
 ToggleBtn.Size = UDim2.new(1, 0, 1, 0)
 ToggleBtn.BackgroundTransparency = 1
 ToggleBtn.Text = ""
 
-local StatContainer = Instance.new("Frame", CenterCol)
-StatContainer.Size = UDim2.new(1, -20, 0, 110)
-StatContainer.Position = UDim2.new(0, 20, 0, 260)
-StatContainer.BackgroundTransparency = 1
-
-local StatCard1 = Instance.new("Frame", StatContainer)
-StatCard1.Size = UDim2.new(0.48, 0, 1, 0)
+-- Cartes Stats
+local StatCard1 = Instance.new("Frame", CenterCol)
+StatCard1.Size = UDim2.new(0.48, 0, 0, 100)
+StatCard1.Position = UDim2.new(0, 0, 0, 270)
 StatCard1.BackgroundColor3 = Theme.CardBg
 Instance.new("UICorner", StatCard1).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", StatCard1).Color = Color3.fromRGB(40, 40, 55)
+Instance.new("UIStroke", StatCard1).Color = Theme.Border
+
 local S1Title = Instance.new("TextLabel", StatCard1)
 S1Title.Size = UDim2.new(1, 0, 0, 20)
 S1Title.Position = UDim2.new(0, 0, 0, 20)
@@ -398,7 +338,7 @@ S1Title.BackgroundTransparency = 1
 S1Title.Text = "CIBLES ÉLIMINÉES"
 S1Title.Font = Enum.Font.GothamMedium
 S1Title.TextSize = 10
-S1Title.TextColor3 = Theme.TextMuted
+S1Title.TextColor3 = Theme.Muted
 local HitsDisplay = Instance.new("TextLabel", StatCard1)
 HitsDisplay.Size = UDim2.new(1, 0, 0, 40)
 HitsDisplay.Position = UDim2.new(0, 0, 0, 45)
@@ -408,12 +348,13 @@ HitsDisplay.Font = Enum.Font.GothamBlack
 HitsDisplay.TextSize = 26
 HitsDisplay.TextColor3 = Theme.Cyan
 
-local StatCard2 = Instance.new("Frame", StatContainer)
-StatCard2.Size = UDim2.new(0.48, 0, 1, 0)
-StatCard2.Position = UDim2.new(0.52, 0, 0, 0)
+local StatCard2 = Instance.new("Frame", CenterCol)
+StatCard2.Size = UDim2.new(0.48, 0, 0, 100)
+StatCard2.Position = UDim2.new(0.52, 0, 0, 270)
 StatCard2.BackgroundColor3 = Theme.CardBg
 Instance.new("UICorner", StatCard2).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", StatCard2).Color = Color3.fromRGB(40, 40, 55)
+Instance.new("UIStroke", StatCard2).Color = Theme.Border
+
 local S2Title = Instance.new("TextLabel", StatCard2)
 S2Title.Size = UDim2.new(1, 0, 0, 20)
 S2Title.Position = UDim2.new(0, 0, 0, 20)
@@ -421,7 +362,7 @@ S2Title.BackgroundTransparency = 1
 S2Title.Text = "PRÉCISION NEXUS"
 S2Title.Font = Enum.Font.GothamMedium
 S2Title.TextSize = 10
-S2Title.TextColor3 = Theme.TextMuted
+S2Title.TextColor3 = Theme.Muted
 local AccDisplay = Instance.new("TextLabel", StatCard2)
 AccDisplay.Size = UDim2.new(1, 0, 0, 40)
 AccDisplay.Position = UDim2.new(0, 0, 0, 45)
@@ -431,77 +372,154 @@ AccDisplay.Font = Enum.Font.GothamBlack
 AccDisplay.TextSize = 26
 AccDisplay.TextColor3 = Theme.Purple
 
--- ==========================================
--- 🔄 LOGIQUE, ANIMATIONS & SINGULARITÉ
--- ==========================================
-local function AddHover(btn, scale)
-    local orig = btn.Size
-    btn.MouseEnter:Connect(function() TS:Create(btn, TweenInfo.new(0.2), {Size = UDim2.new(orig.X.Scale, orig.X.Offset*scale, orig.Y.Scale, orig.Y.Offset*scale)}):Play() end)
-    btn.MouseLeave:Connect(function() TS:Create(btn, TweenInfo.new(0.2), {Size = orig}):Play() end)
-end
-AddHover(AuthBtn, 1.02)
-AddHover(DiscordBtn, 1.02)
+-- COLONNE DROITE : Console & Discord
+local RightCol = Instance.new("Frame", DashScreen)
+RightCol.Size = UDim2.new(0, 180, 1, 0)
+RightCol.Position = UDim2.new(0, 600, 0, 0)
+RightCol.BackgroundTransparency = 1
 
-DiscordBtn.MouseButton1Click:Connect(function()
+local ConsoleCard = Instance.new("Frame", RightCol)
+ConsoleCard.Size = UDim2.new(1, 0, 0, 260)
+ConsoleCard.Position = UDim2.new(0, 0, 0, 80)
+ConsoleCard.BackgroundColor3 = Theme.CardBg
+Instance.new("UICorner", ConsoleCard).CornerRadius = UDim.new(0, 12)
+Instance.new("UIStroke", ConsoleCard).Color = Theme.Border
+
+local CTitle = Instance.new("TextLabel", ConsoleCard)
+CTitle.Size = UDim2.new(1, -20, 0, 30)
+CTitle.Position = UDim2.new(0, 10, 0, 10)
+CTitle.BackgroundTransparency = 1
+CTitle.Text = "Console Nexus"
+CTitle.Font = Enum.Font.GothamBold
+CTitle.TextSize = 12
+CTitle.TextColor3 = Theme.White
+CTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+local LogContainer = Instance.new("ScrollingFrame", ConsoleCard)
+LogContainer.Size = UDim2.new(1, -20, 1, -50)
+LogContainer.Position = UDim2.new(0, 10, 0, 40)
+LogContainer.BackgroundTransparency = 1
+LogContainer.BorderSizePixel = 0
+LogContainer.ScrollBarThickness = 2
+local UIListLog = Instance.new("UIListLayout", LogContainer)
+UIListLog.Padding = UDim.new(0, 8)
+
+local function AddLog(text, color)
+    local log = Instance.new("TextLabel", LogContainer)
+    log.Size = UDim2.new(1, 0, 0, 15)
+    log.BackgroundTransparency = 1
+    log.Text = text
+    log.Font = Enum.Font.Code
+    log.TextSize = 10
+    log.TextColor3 = color or Theme.Muted
+    log.TextXAlignment = Enum.TextXAlignment.Left
+    log.TextWrapped = true
+end
+AddLog("[SYS] Boot sequence complete.", Theme.Success)
+AddLog("[NET] Connected to Nexus Server.", Theme.Cyan)
+
+local DCard = Instance.new("Frame", RightCol)
+DCard.Size = UDim2.new(1, 0, 0, 110)
+DCard.Position = UDim2.new(0, 0, 0, 350)
+DCard.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+Instance.new("UICorner", DCard).CornerRadius = UDim.new(0, 12)
+
+local DTitle = Instance.new("TextLabel", DCard)
+DTitle.Size = UDim2.new(1, 0, 0, 20)
+DTitle.Position = UDim2.new(0, 0, 0, 20)
+DTitle.BackgroundTransparency = 1
+DTitle.Text = "Communauté"
+DTitle.Font = Enum.Font.GothamBold
+DTitle.TextSize = 14
+DTitle.TextColor3 = Color3.new(1,1,1)
+
+local CopyBtn = Instance.new("TextButton", DCard)
+CopyBtn.Size = UDim2.new(0, 120, 0, 35)
+CopyBtn.Position = UDim2.new(0.5, -60, 0, 55)
+CopyBtn.BackgroundColor3 = Color3.fromRGB(70, 80, 200)
+CopyBtn.Text = "Rejoindre"
+CopyBtn.Font = Enum.Font.GothamBold
+CopyBtn.TextSize = 12
+CopyBtn.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", CopyBtn).CornerRadius = UDim.new(0, 8)
+
+-- ==========================================
+-- 🔄 LOGIQUE & ÉVÉNEMENTS
+-- ==========================================
+
+local function CopyLink(btn)
     if setclipboard then
         setclipboard(DISCORD_LINK)
-        DiscordBtn.Text = "Lien Copié !"
-        DiscordBtn.BackgroundColor3 = Theme.Success
+        btn.Text = "Lien Copié !"
+        btn.BackgroundColor3 = Theme.Success
         task.wait(2)
-        DiscordBtn.Text = "Discord"
-        DiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+        if btn == DiscordBtn then btn.Text = "Discord" else btn.Text = "Rejoindre" end
+        btn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
     end
-end)
+end
+DiscordBtn.MouseButton1Click:Connect(function() CopyLink(DiscordBtn) end)
+CopyBtn.MouseButton1Click:Connect(function() CopyLink(CopyBtn) end)
 
+-- Animation bouton
+local function AddHover(btn)
+    local orig = btn.Size
+    btn.MouseEnter:Connect(function() TS:Create(btn, TweenInfo.new(0.2), {Size = UDim2.new(orig.X.Scale, orig.X.Offset*1.02, orig.Y.Scale, orig.Y.Offset*1.02)}):Play() end)
+    btn.MouseLeave:Connect(function() TS:Create(btn, TweenInfo.new(0.2), {Size = orig}):Play() end)
+end
+AddHover(AuthBtn) AddHover(DiscordBtn) AddHover(CopyBtn)
+
+-- LOGIQUE CONNEXION 
 AuthBtn.MouseButton1Click:Connect(function()
-    AuthBtn.Text = "Analyse neurale..."
-    StatusTxt.Text = "Vérification de la clé dans le système..."
-    StatusTxt.TextColor3 = Theme.TextMuted
-    task.wait(0.6)
+    AuthBtn.Text = "Vérification..."
+    StatusTxt.Text = "Analyse de la clé Nexus..."
+    StatusTxt.TextColor3 = Theme.Muted
+    task.wait(0.5)
+    
     if PassInput.Text == PASSWORD then
         StatusTxt.Text = "Accès Autorisé."
         StatusTxt.TextColor3 = Theme.Success
         AuthBtn.BackgroundColor3 = Theme.Success
         AuthBtn.Text = "Connecté"
-        
         task.wait(0.5)
-        local slideOut = TS:Create(LoginScreen, TweenInfo.new(0.6, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Position = UDim2.new(-1, 0, 0, 0)})
-        slideOut:Play()
-        slideOut.Completed:Wait()
-        LoginScreen.Visible = false
         
-        DashScreen.Visible = true -- Le trait ne peut plus apparaître avant !
-        TS:Create(DashScreen, TweenInfo.new(0.8, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
+        -- Transition propre vers le Dash
+        LoginScreen.Visible = false
+        DashScreen.Visible = true
         IsAuthenticated = true
+        AddLog("[NEXUS] IA Core ready.", Theme.Purple)
     else
         StatusTxt.Text = "Erreur : Licence invalide."
         StatusTxt.TextColor3 = Theme.Danger
         AuthBtn.Text = "Réessayer"
-        local origX = InputBg.Position.X.Offset
-        for i = 1, 4 do
-            InputBg.Position = UDim2.new(0, origX + (i%2==0 and 6 or -6), 0, 140)
-            task.wait(0.05)
-        end
-        InputBg.Position = UDim2.new(0, origX, 0, 140)
     end
 end)
 
+-- LOGIQUE SWITCH AIMBOT
 ToggleBtn.MouseButton1Click:Connect(function()
     if not IsAuthenticated then return end
     AutoHit = not AutoHit
     local endPos = AutoHit and UDim2.new(1, -22, 0.5, -9) or UDim2.new(0, 4, 0.5, -9)
-    local endBg = AutoHit and Theme.Cyan or Theme.SpaceBlack
-    local endKnob = AutoHit and Theme.SpaceBlack or Theme.TextWhite
-    TS:Create(ToggleKnob, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = endPos, BackgroundColor3 = endKnob}):Play()
+    local endBg = AutoHit and Theme.Cyan or Theme.Bg
+    
+    TS:Create(ToggleKnob, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = endPos}):Play()
     TS:Create(ToggleBg, TweenInfo.new(0.3), {BackgroundColor3 = endBg}):Play()
-    TS:Create(ToggleStroke, TweenInfo.new(0.3), {Color = AutoHit and Theme.Cyan or Color3.fromRGB(60, 60, 75)}):Play()
-    if AutoHit then TS:Create(EngineCard.UIStroke, TweenInfo.new(0.3), {Color = Theme.Cyan}):Play()
-    else TS:Create(EngineCard.UIStroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(40, 40, 55)}):Play() end
+    TS:Create(ToggleStroke, TweenInfo.new(0.3), {Color = AutoHit and Theme.Cyan or Theme.Border}):Play()
+    
+    if AutoHit then
+        TS:Create(EngineStroke, TweenInfo.new(0.3), {Color = Theme.Cyan}):Play()
+        AddLog("[NEXUS] Tracking system ON.", Theme.Success)
+    else
+        TS:Create(EngineStroke, TweenInfo.new(0.3), {Color = Theme.Border}):Play()
+        AddLog("[NEXUS] Tracking system OFF.", Theme.Danger)
+    end
 end)
 
+-- DRAGGING FENÊTRE
 local dragging, dragInput, dragStart, startPos
-AppWrapper.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = true dragStart = input.Position startPos = AppWrapper.Position end
+AppWindow.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true dragStart = input.Position startPos = AppWindow.Position
+    end
 end)
 UIS.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
@@ -512,76 +530,26 @@ end)
 RS.RenderStepped:Connect(function()
     if dragging and dragInput then
         local delta = dragInput.Position - dragStart
-        AppWrapper.Position = AppWrapper.Position:Lerp(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y), 0.2)
+        AppWindow.Position = AppWindow.Position:Lerp(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y), 0.2)
     end
 end)
 
--- 💥 MOTEUR DE SINGULARITÉ (ANIMATION CTRL)
-local function PlaySingularity(showing)
-    if IsAnimating then return end
-    IsAnimating = true
-    local animSpeed = 0.8
-    local cosmosInfo = TweenInfo.new(1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
-
-    if showing then
-        MenuVisible = true
-        AppWrapper.Visible = true
-        
-        -- Flash d'apparition
-        local flash = Instance.new("Frame", SG)
-        flash.Size = UDim2.new(1, 0, 1, 0)
-        flash.BackgroundColor3 = Theme.Cyan
-        flash.BackgroundTransparency = 0.8
-        flash.ZIndex = 100
-        TS:Create(flash, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1}):Play()
-        game.Debris:AddItem(flash, 0.5)
-
-        -- Expansion de la fenêtre
-        AppWrapper.Size = UDim2.new(0, 0, 0, 0)
-        TS:Create(AppWrapper, TweenInfo.new(0.9, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), {Size = UDim2.new(0, 750, 0, 450)}):Play()
-
-        -- Rallumage progressif de l'univers
-        for _, item in ipairs(CosmosElements) do
-            local props = {}
-            props[item.prop] = item.base
-            if item.isStar then props.Size = UDim2.new(0, item.baseSize, 0, item.baseSize) end
-            TS:Create(item.inst, cosmosInfo, props):Play()
-        end
-        task.wait(1)
-        IsAnimating = false
-    else
-        -- Aspiration / Contraction
-        local collapse = TS:Create(AppWrapper, TweenInfo.new(animSpeed, Enum.EasingStyle.Exponential, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)})
-        collapse:Play()
-        
-        -- Dissipation TOTALE de l'espace (Stream-Proof)
-        for _, item in ipairs(CosmosElements) do
-            local props = {}
-            props[item.prop] = 1 -- Totalement invisible
-            if item.isStar then props.Size = UDim2.new(0, 0, 0, 0) end
-            TS:Create(item.inst, cosmosInfo, props):Play()
-        end
-
-        collapse.Completed:Wait()
-        AppWrapper.Visible = false
-        MenuVisible = false
-        IsAnimating = false
-    end
-end
-
+-- 🛡️ RACCOURCIS : CACHER TOUT INSTANTANÉMENT SANS BUG (STREAM-PROOF)
 UIS.InputBegan:Connect(function(i, g)
     if g then return end
     if i.KeyCode == Enum.KeyCode.X and IsAuthenticated then
         ToggleBtn.MouseButton1Click:Fire()
     elseif (i.KeyCode == Enum.KeyCode.LeftControl or i.KeyCode == Enum.KeyCode.RightControl) then
-        PlaySingularity(not MenuVisible)
+        MenuVisible = not MenuVisible
+        AppWindow.Visible = MenuVisible
+        CosmosBg.Visible = MenuVisible
     elseif i.KeyCode == Enum.KeyCode.Delete then 
         SG:Destroy()
     end
 end)
 
 -- ==========================================
--- 🎯 MOTEUR IA
+-- 🎯 MOTEUR IA (Aimbot Mathématique Parfait)
 -- ==========================================
 local IGNORE = {
     floorcollider=true, cursor_trail=true, baseplate=true, screen=true,
@@ -635,6 +603,7 @@ RS.RenderStepped:Connect(function()
     end)
 
     if #notes == 0 then currentTarget = nil return end
+    
     local scored = {}
     for _,note in ipairs(notes) do
         local sp, vis = Cam:WorldToViewportPoint(note.Position)
