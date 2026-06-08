@@ -1,7 +1,7 @@
 --[[
     =======================================================================
     🌌 NEXUS A.I. - BY HIROSHI738 (PRO EDITION)
-    💎 Telemetry Center Fix | Zero-Bug | Stream-Proof | Themes
+    💎 Telemetry Layout Fixed | Zero-Bug Rendering | Stream-Proof | Themes
     =======================================================================
 ]]
 
@@ -208,7 +208,7 @@ StatusTxt.TextSize = 12
 -- 🎛️ DASHBOARD & SETTINGS NAVIGATION
 -- ==========================================
 local MainContent = Instance.new("Frame", AppWindow)
-MainContent.Size = UDim2.new(1, 0, 1, -25) -- Laisse 25px d'espace en bas pour le footer
+MainContent.Size = UDim2.new(1, 0, 1, -25) -- Laisse 25px d'espace en bas pour le footer !
 MainContent.BackgroundTransparency = 1
 MainContent.Visible = false 
 
@@ -257,7 +257,7 @@ TabSettingsBtn.TextColor3 = BaseColors.Muted
 TabSettingsBtn.TextXAlignment = Enum.TextXAlignment.Left
 Instance.new("UICorner", TabSettingsBtn).CornerRadius = UDim.new(0, 8)
 
--- PROFILE CARD WITH PULSING ONLINE DOT
+-- PROFILE CARD
 local ProfileCard = Instance.new("Frame", Sidebar)
 ProfileCard.Size = UDim2.new(1, -30, 0, 60)
 ProfileCard.Position = UDim2.new(0, 15, 1, -75)
@@ -278,7 +278,7 @@ OnlineDot.Position = UDim2.new(1, -8, 1, -8)
 OnlineDot.BackgroundColor3 = BaseColors.Success
 Instance.new("UICorner", OnlineDot).CornerRadius = UDim.new(1, 0)
 Instance.new("UIStroke", OnlineDot).Color = BaseColors.Bg
--- Pulse Animation
+
 task.spawn(function()
     while true do
         TS:Create(OnlineDot, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 0.5}):Play()
@@ -309,7 +309,6 @@ PRank.TextColor3 = CurrentTheme.Primary
 PRank.TextXAlignment = Enum.TextXAlignment.Left
 table.insert(ThemeObjects.PrimaryText, PRank)
 
--- TABS
 local DashTab = Instance.new("Frame", MainContent)
 DashTab.Size = UDim2.new(1, -200, 1, 0)
 DashTab.Position = UDim2.new(0, 200, 0, 0)
@@ -322,7 +321,7 @@ SettingsTab.BackgroundTransparency = 1
 SettingsTab.Visible = false
 
 -- ==========================================
--- 🚀 DASHBOARD TAB (PIXEL PERFECT + VISUALIZER)
+-- 🚀 DASHBOARD TAB 
 -- ==========================================
 local HeaderTxt = Instance.new("TextLabel", DashTab)
 HeaderTxt.Size = UDim2.new(0, 300, 0, 30)
@@ -334,7 +333,6 @@ HeaderTxt.TextSize = 18
 HeaderTxt.TextColor3 = BaseColors.White
 HeaderTxt.TextXAlignment = Enum.TextXAlignment.Left
 
--- 1. Engine Card : W=550, H=110
 local EngineCard = Instance.new("Frame", DashTab)
 EngineCard.Size = UDim2.new(0, 550, 0, 110)
 EngineCard.Position = UDim2.new(0, 25, 0, 55)
@@ -354,7 +352,7 @@ ETitle.TextColor3 = BaseColors.White
 ETitle.TextXAlignment = Enum.TextXAlignment.Left
 
 local EDesc = Instance.new("TextLabel", EngineCard)
-EDesc.Size = UDim2.new(0, 350, 0, 30)
+EDesc.Size = UDim2.new(0, 450, 0, 30)
 EDesc.Position = UDim2.new(0, 20, 0, 35)
 EDesc.BackgroundTransparency = 1
 EDesc.Text = "Real-time 3D environment analysis for undetectable spatial locking. (Stream-Proof Active)"
@@ -363,40 +361,6 @@ EDesc.TextSize = 11
 EDesc.TextColor3 = BaseColors.Muted
 EDesc.TextXAlignment = Enum.TextXAlignment.Left
 EDesc.TextWrapped = true
-
--- 🎶 BONUS : AUDIO VISUALIZER (Right side of Engine Card)
-local VisContainer = Instance.new("Frame", EngineCard)
-VisContainer.Size = UDim2.new(0, 80, 0, 30)
-VisContainer.Position = UDim2.new(1, -100, 0, 15)
-VisContainer.BackgroundTransparency = 1
-
-local bars = {}
-for i = 1, 6 do
-    local bar = Instance.new("Frame", VisContainer)
-    bar.Size = UDim2.new(0, 6, 0, 5) 
-    bar.Position = UDim2.new(0, (i-1)*12, 1, -5)
-    bar.AnchorPoint = Vector2.new(0, 1) 
-    bar.BackgroundColor3 = CurrentTheme.Secondary
-    Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
-    table.insert(bars, bar)
-    table.insert(ThemeObjects.SecondaryBg, bar)
-end
-
-task.spawn(function()
-    while true do
-        if AutoHit then
-            for _, bar in ipairs(bars) do
-                local newHeight = math.random(5, 30)
-                TS:Create(bar, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 6, 0, newHeight)}):Play()
-            end
-        else
-            for _, bar in ipairs(bars) do
-                TS:Create(bar, TweenInfo.new(0.3), {Size = UDim2.new(0, 6, 0, 5)}):Play()
-            end
-        end
-        task.wait(0.2)
-    end
-end)
 
 local SwitchLbl = Instance.new("TextLabel", EngineCard)
 SwitchLbl.Size = UDim2.new(0, 200, 0, 20)
@@ -425,7 +389,7 @@ ToggleBtn.Size = UDim2.new(1, 0, 1, 0)
 ToggleBtn.BackgroundTransparency = 1
 ToggleBtn.Text = ""
 
--- 2. Stat Card 1 (Targets) : W=265, H=105
+-- Left Column (Stats)
 local StatCard1 = Instance.new("Frame", DashTab)
 StatCard1.Size = UDim2.new(0, 265, 0, 105)
 StatCard1.Position = UDim2.new(0, 25, 0, 185)
@@ -450,7 +414,6 @@ HitsDisplay.TextSize = 26
 HitsDisplay.TextColor3 = CurrentTheme.Primary
 table.insert(ThemeObjects.PrimaryText, HitsDisplay)
 
--- 3. Stat Card 2 (Accuracy) : W=265, H=105
 local StatCard2 = Instance.new("Frame", DashTab)
 StatCard2.Size = UDim2.new(0, 265, 0, 105)
 StatCard2.Position = UDim2.new(0, 310, 0, 185)
@@ -475,14 +438,13 @@ AccDisplay.TextSize = 26
 AccDisplay.TextColor3 = CurrentTheme.Secondary
 table.insert(ThemeObjects.SecondaryText, AccDisplay)
 
--- 4. Console Card : W=370, H=135
+-- Right Column (Console)
 local ConsoleCard = Instance.new("Frame", DashTab)
 ConsoleCard.Size = UDim2.new(0, 370, 0, 135)
 ConsoleCard.Position = UDim2.new(0, 25, 0, 300)
 ConsoleCard.BackgroundColor3 = BaseColors.CardBg
 Instance.new("UICorner", ConsoleCard).CornerRadius = UDim.new(0, 12)
 Instance.new("UIStroke", ConsoleCard).Color = BaseColors.Border
-
 local CTitle = Instance.new("TextLabel", ConsoleCard)
 CTitle.Size = UDim2.new(1, -30, 0, 20)
 CTitle.Position = UDim2.new(0, 15, 0, 10)
@@ -514,14 +476,13 @@ local function AddLog(text, color)
     LogContainer.CanvasPosition = Vector2.new(0, 9999)
 end
 
--- 5. Discord Widget : W=165, H=135
+-- Discord Widget 
 local DCard = Instance.new("Frame", DashTab)
 DCard.Size = UDim2.new(0, 165, 0, 135)
 DCard.Position = UDim2.new(0, 410, 0, 300)
 DCard.BackgroundColor3 = BaseColors.CardBg
 Instance.new("UICorner", DCard).CornerRadius = UDim.new(0, 12)
 Instance.new("UIStroke", DCard).Color = BaseColors.Discord
-
 local DIcon = Instance.new("TextLabel", DCard)
 DIcon.Size = UDim2.new(1, 0, 0, 30)
 DIcon.Position = UDim2.new(0, 0, 0, 15)
@@ -548,7 +509,7 @@ CopyBtn.TextColor3 = BaseColors.White
 Instance.new("UICorner", CopyBtn).CornerRadius = UDim.new(0, 6)
 
 -- ==========================================
--- ⚙️ SETTINGS TAB (Exact Layout)
+-- ⚙️ SETTINGS TAB 
 -- ==========================================
 local SetTitle = Instance.new("TextLabel", SettingsTab)
 SetTitle.Size = UDim2.new(0, 300, 0, 30)
@@ -628,7 +589,7 @@ CreateSecItem(70, "Anti-Cheat Bypass (v4.2)", "INJECTED")
 CreateSecItem(95, "StreamProof Engine (CTRL key)", "ENABLED")
 
 -- ==========================================
--- 📊 TELEMETRY FOOTER (ABSOLUTE PLACEMENT FIX)
+-- 📊 TELEMETRY FOOTER (FIXED ALIGNMENT)
 -- ==========================================
 local Footer = Instance.new("Frame", AppWindow)
 Footer.Size = UDim2.new(1, 0, 0, 25)
@@ -651,33 +612,11 @@ FooterStatus.TextSize = 10
 FooterStatus.TextColor3 = BaseColors.Success
 FooterStatus.TextXAlignment = Enum.TextXAlignment.Left
 
--- 2. PING (Center-Left)
-local FooterPing = Instance.new("TextLabel", Footer)
-FooterPing.Size = UDim2.new(0, 80, 1, 0)
-FooterPing.Position = UDim2.new(0.5, -80, 0, 0)
-FooterPing.BackgroundTransparency = 1
-FooterPing.Text = "PING: --ms"
-FooterPing.Font = Enum.Font.GothamMedium
-FooterPing.TextSize = 10
-FooterPing.TextColor3 = BaseColors.Muted
-FooterPing.TextXAlignment = Enum.TextXAlignment.Center
-
--- 3. FPS (Center-Right)
-local FooterFPS = Instance.new("TextLabel", Footer)
-FooterFPS.Size = UDim2.new(0, 80, 1, 0)
-FooterFPS.Position = UDim2.new(0.5, 0, 0, 0)
-FooterFPS.BackgroundTransparency = 1
-FooterFPS.Text = "FPS: 60"
-FooterFPS.Font = Enum.Font.GothamBold
-FooterFPS.TextSize = 10
-FooterFPS.TextColor3 = CurrentTheme.Primary
-FooterFPS.TextXAlignment = Enum.TextXAlignment.Center
-table.insert(ThemeObjects.PrimaryText, FooterFPS)
-
--- 4. UPTIME (Right)
+-- 4. UPTIME (Right) - Boîte plus large !
 local FooterTime = Instance.new("TextLabel", Footer)
-FooterTime.Size = UDim2.new(0, 120, 1, 0)
-FooterTime.Position = UDim2.new(1, -135, 0, 0) -- 120 width + 15 padding
+FooterTime.Size = UDim2.new(0, 110, 1, 0)
+FooterTime.Position = UDim2.new(1, -15, 0, 0)
+FooterTime.AnchorPoint = Vector2.new(1, 0)
 FooterTime.BackgroundTransparency = 1
 FooterTime.Text = "UPTIME 00:00:00"
 FooterTime.Font = Enum.Font.Code
@@ -686,7 +625,31 @@ FooterTime.TextColor3 = CurrentTheme.Secondary
 FooterTime.TextXAlignment = Enum.TextXAlignment.Right
 table.insert(ThemeObjects.SecondaryText, FooterTime)
 
--- Update Telemetry Loop
+-- 3. FPS (Center-Right) - Décalé plus à gauche !
+local FooterFPS = Instance.new("TextLabel", Footer)
+FooterFPS.Size = UDim2.new(0, 60, 1, 0)
+FooterFPS.Position = UDim2.new(1, -135, 0, 0) 
+FooterFPS.AnchorPoint = Vector2.new(1, 0)
+FooterFPS.BackgroundTransparency = 1
+FooterFPS.Text = "FPS: 60"
+FooterFPS.Font = Enum.Font.GothamBold
+FooterFPS.TextSize = 10
+FooterFPS.TextColor3 = CurrentTheme.Primary
+FooterFPS.TextXAlignment = Enum.TextXAlignment.Right
+table.insert(ThemeObjects.PrimaryText, FooterFPS)
+
+-- 2. PING (Center-Left) - Décalé encore plus !
+local FooterPing = Instance.new("TextLabel", Footer)
+FooterPing.Size = UDim2.new(0, 70, 1, 0)
+FooterPing.Position = UDim2.new(1, -205, 0, 0)
+FooterPing.AnchorPoint = Vector2.new(1, 0)
+FooterPing.BackgroundTransparency = 1
+FooterPing.Text = "PING: 40ms"
+FooterPing.Font = Enum.Font.GothamMedium
+FooterPing.TextSize = 10
+FooterPing.TextColor3 = BaseColors.Muted
+FooterPing.TextXAlignment = Enum.TextXAlignment.Right
+
 local frames = 0
 RS.RenderStepped:Connect(function(dt)
     local up = tick() - SessionStart
