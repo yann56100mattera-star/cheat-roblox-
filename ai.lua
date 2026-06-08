@@ -1,7 +1,7 @@
 --[[
     =======================================================================
-    🌌 HIROSHI OS - NEURAL PREMIUM ARCHITECTURE (v5.0)
-    💎 Interface SaaS Haut de Gamme | UX/UI Redesign Total
+    🌌 IA NEXUS - BY HIROSHI738
+    💎 Architecture Stable | Cosmos Permanent | UI/UX Haut de Gamme
     =======================================================================
 ]]
 
@@ -12,7 +12,6 @@ local TS = game:GetService("TweenService")
 local LP = Players.LocalPlayer
 local Cam = workspace.CurrentCamera
 
--- Variables globales
 local DISCORD_LINK = "https://discord.gg/qTGtM4Uyc"
 local PASSWORD = "Hiro738"
 local AutoHit = false
@@ -20,396 +19,351 @@ local TotalHits = 0
 local MenuVisible = true
 local IsAuthenticated = false
 
-if LP.PlayerGui:FindFirstChild("HiroshiOS") then 
-    LP.PlayerGui.HiroshiOS:Destroy() 
+if LP.PlayerGui:FindFirstChild("HiroshiNeuralOS") then 
+    LP.PlayerGui.HiroshiNeuralOS:Destroy() 
 end
 
 -- ==========================================
--- 🎨 PALETTE & DESIGN SYSTEM
+-- 🎨 PALETTE & DESIGN SYSTEM (Premium Space)
 -- ==========================================
-local Colors = {
-    AppBg = Color3.fromRGB(10, 10, 15),       -- Fond principal très sombre
-    CardBg = Color3.fromRGB(18, 18, 26),      -- Fond des cartes
-    CardHover = Color3.fromRGB(24, 24, 34),   -- Fond des cartes au survol
-    Cyan = Color3.fromRGB(0, 225, 255),       -- Accent primaire
-    Purple = Color3.fromRGB(140, 60, 255),    -- Accent secondaire
+local Theme = {
+    DeepSpace = Color3.fromRGB(5, 5, 8),
+    CardBg = Color3.fromRGB(14, 14, 20),
+    CardHover = Color3.fromRGB(20, 20, 28),
+    Cyan = Color3.fromRGB(0, 225, 255),
+    Purple = Color3.fromRGB(150, 60, 255),
     TextWhite = Color3.fromRGB(250, 250, 255),
-    TextGray = Color3.fromRGB(150, 150, 170),
-    Danger = Color3.fromRGB(255, 60, 80),
-    Success = Color3.fromRGB(40, 220, 120)
+    TextMuted = Color3.fromRGB(140, 140, 160),
+    Border = Color3.fromRGB(35, 35, 50),
+    Success = Color3.fromRGB(40, 220, 120),
+    Danger = Color3.fromRGB(255, 60, 80)
 }
-
-local BlurAsset = "rbxassetid://5028857084" -- Pour les ombres/glows
-
--- Utilitaires de création d'UI pour garder le code propre
-local function CreateGlow(parent, color, sizeMultiplier, transparency)
-    local glow = Instance.new("ImageLabel", parent)
-    glow.BackgroundTransparency = 1
-    glow.Image = BlurAsset
-    glow.ImageColor3 = color
-    glow.ImageTransparency = transparency or 0.5
-    glow.Size = UDim2.new(sizeMultiplier, 0, sizeMultiplier, 0)
-    glow.Position = UDim2.new(0.5, 0, 0.5, 0)
-    glow.AnchorPoint = Vector2.new(0.5, 0.5)
-    glow.ZIndex = 0
-    return glow
-end
-
-local function ApplyHover(element, targetScale, bgTargetColor)
-    local origSize = element.Size
-    local origBg = element.BackgroundColor3
-    element.MouseEnter:Connect(function()
-        local props = {Size = UDim2.new(origSize.X.Scale, origSize.X.Offset * targetScale, origSize.Y.Scale, origSize.Y.Offset * targetScale)}
-        if bgTargetColor then props.BackgroundColor3 = bgTargetColor end
-        TS:Create(element, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
-    end)
-    element.MouseLeave:Connect(function()
-        local props = {Size = origSize}
-        if bgTargetColor then props.BackgroundColor3 = origBg end
-        TS:Create(element, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
-    end)
-end
 
 -- ==========================================
 -- 🌌 CRÉATION DE L'INTERFACE PRINCIPALE
 -- ==========================================
 local SG = Instance.new("ScreenGui")
-SG.Name = "HiroshiOS"
+SG.Name = "HiroshiNeuralOS"
 SG.ResetOnSpawn = false
 SG.IgnoreGuiInset = true
-SG.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+SG.DisplayOrder = 10000
 SG.Parent = LP.PlayerGui
 
--- 🌠 1. FOND COSMOS (Stream-Proof)
-local CosmicLayer = Instance.new("Frame", SG)
-CosmicLayer.Size = UDim2.new(1, 0, 1, 0)
-CosmicLayer.BackgroundTransparency = 1
-CosmicLayer.ZIndex = -1
+-- ==========================================
+-- 🌠 FOND COSMOS PERMANENT (INEFFAÇABLE)
+-- ==========================================
+local CosmosBg = Instance.new("Frame", SG)
+CosmosBg.Size = UDim2.new(1, 0, 1, 0)
+CosmosBg.BackgroundTransparency = 1
+CosmosBg.ZIndex = -10
 
 local stars = {}
-for i = 1, 100 do
-    local star = Instance.new("Frame", CosmicLayer)
+for i = 1, 150 do
+    local star = Instance.new("Frame", CosmosBg)
     local size = math.random(1, 3)
     star.Size = UDim2.new(0, size, 0, size)
     star.Position = UDim2.new(math.random(), 0, math.random(), 0)
-    star.BackgroundColor3 = (math.random(1, 4) == 1) and Colors.Cyan or Color3.new(1,1,1)
+    star.BackgroundColor3 = (math.random(1, 5) == 1) and Theme.Cyan or Color3.new(1,1,1)
     star.BorderSizePixel = 0
-    star.BackgroundTransparency = math.random(30, 80) / 100
+    star.BackgroundTransparency = math.random(20, 80) / 100
     Instance.new("UICorner", star).CornerRadius = UDim.new(1, 0)
-    table.insert(stars, {frame = star, speed = math.random(2, 15) / 100000})
+    table.insert(stars, {frame = star, speed = math.random(1, 10) / 100000})
 end
 
 RS.RenderStepped:Connect(function()
-    if not MenuVisible then return end
     for _, s in ipairs(stars) do
         local newY = s.frame.Position.Y.Scale + s.speed
         if newY > 1 then newY = 0 end
         s.frame.Position = UDim2.new(s.frame.Position.X.Scale, 0, newY, 0)
     end
-end)
-
--- ✨ 2. CURSEUR PREMIUM
-RS.RenderStepped:Connect(function()
-    if not MenuVisible then return end
-    local mouseLoc = UIS:GetMouseLocation()
-    if math.random(1, 2) == 1 then
-        local p = Instance.new("Frame", CosmicLayer)
-        p.Size = UDim2.new(0, 3, 0, 3)
-        p.Position = UDim2.new(0, mouseLoc.X + math.random(-4, 4), 0, mouseLoc.Y + math.random(-4, 4))
-        p.BackgroundColor3 = (math.random(1, 2) == 1) and Colors.Cyan or Colors.Purple
-        p.BorderSizePixel = 0
-        Instance.new("UICorner", p).CornerRadius = UDim.new(1, 0)
+    
+    if math.random(1, 300) == 1 then
+        local fs = Instance.new("Frame", CosmosBg)
+        fs.Size = UDim2.new(0, 40, 0, 2)
+        fs.Position = UDim2.new(math.random(), 0, 0, -50)
+        fs.BackgroundColor3 = Theme.Cyan
+        fs.BorderSizePixel = 0
+        fs.Rotation = 45
         
-        local tween = TS:Create(p, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Position = UDim2.new(0, p.Position.X.Offset, 0, p.Position.Y.Offset + 20), BackgroundTransparency = 1
-        })
-        tween:Play()
-        tween.Completed:Connect(function() p:Destroy() end)
+        TS:Create(fs, TweenInfo.new(0.8, Enum.EasingStyle.Linear), {
+            Position = UDim2.new(fs.Position.X.Scale - 0.2, 0, 1.2, 0),
+            BackgroundTransparency = 1
+        }):Play()
+        game.Debris:AddItem(fs, 1)
     end
 end)
 
--- 💻 3. CONTENEUR PRINCIPAL (Application)
-local MainApp = Instance.new("CanvasGroup", SG)
-MainApp.Size = UDim2.new(0, 780, 0, 480)
-MainApp.Position = UDim2.new(0.5, 0, 0.5, 0)
-MainApp.AnchorPoint = Vector2.new(0.5, 0.5)
-MainApp.BackgroundColor3 = Colors.AppBg
-MainApp.BackgroundTransparency = 0.05
-MainApp.BorderSizePixel = 0
-MainApp.GroupTransparency = 1 
-Instance.new("UICorner", MainApp).CornerRadius = UDim.new(0, 14)
+-- Curseur Spatial (Traînée)
+RS.RenderStepped:Connect(function()
+    local mouseLoc = UIS:GetMouseLocation()
+    if math.random(1, 2) == 1 then
+        local p = Instance.new("Frame", CosmosBg)
+        p.Size = UDim2.new(0, 4, 0, 4)
+        p.Position = UDim2.new(0, mouseLoc.X + math.random(-6, 6), 0, mouseLoc.Y + math.random(-6, 6))
+        p.BackgroundColor3 = (math.random(1, 2) == 1) and Theme.Cyan or Theme.Purple
+        p.BorderSizePixel = 0
+        Instance.new("UICorner", p).CornerRadius = UDim.new(1, 0)
+        
+        TS:Create(p, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Position = UDim2.new(0, p.Position.X.Offset, 0, p.Position.Y.Offset + 20),
+            BackgroundTransparency = 1,
+            Size = UDim2.new(0, 0, 0, 0)
+        }):Play()
+        game.Debris:AddItem(p, 0.6)
+    end
+end)
 
-local AppStroke = Instance.new("UIStroke", MainApp)
+-- ==========================================
+-- 💻 CONTENEUR DU LOGICIEL (Safe Frame)
+-- ==========================================
+local AppWindow = Instance.new("Frame", SG)
+AppWindow.Size = UDim2.new(0, 850, 0, 500)
+AppWindow.Position = UDim2.new(0.5, 0, 0.5, 0)
+AppWindow.AnchorPoint = Vector2.new(0.5, 0.5)
+AppWindow.BackgroundColor3 = Theme.DeepSpace
+AppWindow.BackgroundTransparency = 0.05
+AppWindow.BorderSizePixel = 0
+AppWindow.ClipsDescendants = true
+Instance.new("UICorner", AppWindow).CornerRadius = UDim.new(0, 14)
+local AppStroke = Instance.new("UIStroke", AppWindow)
+AppStroke.Color = Theme.Border
 AppStroke.Thickness = 1
-AppStroke.Color = Color3.fromRGB(40, 40, 55)
 
-CreateGlow(MainApp, Colors.Purple, 1.05, 0.6)
+local AppGlow = Instance.new("ImageLabel", AppWindow)
+AppGlow.Size = UDim2.new(1, 60, 1, 60)
+AppGlow.Position = UDim2.new(0, -30, 0, -30)
+AppGlow.BackgroundTransparency = 1
+AppGlow.Image = "rbxassetid://5028857084"
+AppGlow.ImageColor3 = Theme.Purple
+AppGlow.ImageTransparency = 0.6
+AppGlow.ZIndex = -1
 
 -- ==========================================
--- 🔐 ÉCRAN DE CONNEXION (Refonte Premium)
+-- 🔐 ÉCRAN DE CONNEXION (Login Premium)
 -- ==========================================
-local LoginView = Instance.new("Frame", MainApp)
-LoginView.Size = UDim2.new(1, 0, 1, 0)
-LoginView.BackgroundTransparency = 1
+local LoginScreen = Instance.new("Frame", AppWindow)
+LoginScreen.Size = UDim2.new(1, 0, 1, 0)
+LoginScreen.BackgroundTransparency = 1
+LoginScreen.ZIndex = 10
 
-local LoginCard = Instance.new("Frame", LoginView)
-LoginCard.Size = UDim2.new(0, 340, 0, 360)
+local LoginCard = Instance.new("Frame", LoginScreen)
+LoginCard.Size = UDim2.new(0, 380, 0, 420)
 LoginCard.Position = UDim2.new(0.5, 0, 0.5, 0)
 LoginCard.AnchorPoint = Vector2.new(0.5, 0.5)
-LoginCard.BackgroundColor3 = Colors.CardBg
+LoginCard.BackgroundColor3 = Theme.CardBg
 Instance.new("UICorner", LoginCard).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", LoginCard).Color = Color3.fromRGB(50, 50, 65)
+Instance.new("UIStroke", LoginCard).Color = Theme.Border
 
-local LogoGlow = CreateGlow(LoginCard, Colors.Cyan, 1.5, 0.8)
-LogoGlow.Position = UDim2.new(0.5, 0, 0, 40)
-
-local LLogo = Instance.new("TextLabel", LoginCard)
-LLogo.Size = UDim2.new(1, 0, 0, 40)
-LLogo.Position = UDim2.new(0, 0, 0, 35)
-LLogo.BackgroundTransparency = 1
-LLogo.Text = "H I R O S H I"
-LLogo.Font = Enum.Font.GothamBlack
-LLogo.TextSize = 24
-LLogo.TextColor3 = Colors.TextWhite
+local LTitle = Instance.new("TextLabel", LoginCard)
+LTitle.Size = UDim2.new(1, 0, 0, 40)
+LTitle.Position = UDim2.new(0, 0, 0, 50)
+LTitle.BackgroundTransparency = 1
+LTitle.Text = "I A   N E X U S"
+LTitle.Font = Enum.Font.GothamBlack
+LTitle.TextSize = 26
+LTitle.TextColor3 = Theme.TextWhite
 
 local LSub = Instance.new("TextLabel", LoginCard)
 LSub.Size = UDim2.new(1, 0, 0, 20)
-LSub.Position = UDim2.new(0, 0, 0, 70)
+LSub.Position = UDim2.new(0, 0, 0, 90)
 LSub.BackgroundTransparency = 1
-LSub.Text = "Neural Engine Access"
+LSub.Text = "Premium Engine • By Hiroshi738"
 LSub.Font = Enum.Font.GothamMedium
-LSub.TextSize = 12
-LSub.TextColor3 = Colors.Cyan
+LSub.TextSize = 13
+LSub.TextColor3 = Theme.Cyan
 
-local InputContainer = Instance.new("Frame", LoginCard)
-InputContainer.Size = UDim2.new(1, -60, 0, 45)
-InputContainer.Position = UDim2.new(0, 30, 0, 130)
-InputContainer.BackgroundColor3 = Colors.AppBg
-Instance.new("UICorner", InputContainer).CornerRadius = UDim.new(0, 8)
-local InputStroke = Instance.new("UIStroke", InputContainer)
-InputStroke.Color = Color3.fromRGB(60, 60, 75)
+local InputBg = Instance.new("Frame", LoginCard)
+InputBg.Size = UDim2.new(1, -80, 0, 50)
+InputBg.Position = UDim2.new(0, 40, 0, 160)
+InputBg.BackgroundColor3 = Theme.DeepSpace
+Instance.new("UICorner", InputBg).CornerRadius = UDim.new(0, 8)
+local InputStroke = Instance.new("UIStroke", InputBg)
+InputStroke.Color = Theme.Border
 
-local PassInput = Instance.new("TextBox", InputContainer)
-PassInput.Size = UDim2.new(1, -20, 1, 0)
-PassInput.Position = UDim2.new(0, 10, 0, 0)
+local PassInput = Instance.new("TextBox", InputBg)
+PassInput.Size = UDim2.new(1, -30, 1, 0)
+PassInput.Position = UDim2.new(0, 15, 0, 0)
 PassInput.BackgroundTransparency = 1
 PassInput.Text = ""
-PassInput.PlaceholderText = "Saisissez votre clé de licence..."
+PassInput.PlaceholderText = "Saisissez votre clé Nexus"
 PassInput.Font = Enum.Font.Gotham
 PassInput.TextSize = 13
-PassInput.TextColor3 = Colors.TextWhite
+PassInput.TextColor3 = Theme.TextWhite
 PassInput.TextXAlignment = Enum.TextXAlignment.Left
 
-PassInput.Focused:Connect(function() TS:Create(InputStroke, TweenInfo.new(0.3), {Color = Colors.Purple}):Play() end)
-PassInput.FocusLost:Connect(function() TS:Create(InputStroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(60, 60, 75)}):Play() end)
+PassInput.Focused:Connect(function() TS:Create(InputStroke, TweenInfo.new(0.3), {Color = Theme.Cyan}):Play() end)
+PassInput.FocusLost:Connect(function() TS:Create(InputStroke, TweenInfo.new(0.3), {Color = Theme.Border}):Play() end)
 
 local AuthBtn = Instance.new("TextButton", LoginCard)
-AuthBtn.Size = UDim2.new(1, -60, 0, 45)
-AuthBtn.Position = UDim2.new(0, 30, 0, 190)
-AuthBtn.BackgroundColor3 = Colors.TextWhite
-AuthBtn.Text = "Initialiser la connexion"
+AuthBtn.Size = UDim2.new(1, -80, 0, 45)
+AuthBtn.Position = UDim2.new(0, 40, 0, 230)
+AuthBtn.BackgroundColor3 = Theme.TextWhite
+AuthBtn.Text = "Initialiser le Nexus"
 AuthBtn.Font = Enum.Font.GothamBold
 AuthBtn.TextSize = 13
-AuthBtn.TextColor3 = Colors.AppBg
+AuthBtn.TextColor3 = Theme.DeepSpace
 Instance.new("UICorner", AuthBtn).CornerRadius = UDim.new(0, 8)
-ApplyHover(AuthBtn, 1.02)
 
-local LoginStatus = Instance.new("TextLabel", LoginCard)
-LoginStatus.Size = UDim2.new(1, 0, 0, 20)
-LoginStatus.Position = UDim2.new(0, 0, 0, 245)
-LoginStatus.BackgroundTransparency = 1
-LoginStatus.Text = ""
-LoginStatus.Font = Enum.Font.Gotham
-LoginStatus.TextSize = 12
+local StatusTxt = Instance.new("TextLabel", LoginCard)
+StatusTxt.Size = UDim2.new(1, 0, 0, 20)
+StatusTxt.Position = UDim2.new(0, 0, 0, 290)
+StatusTxt.BackgroundTransparency = 1
+StatusTxt.Text = ""
+StatusTxt.Font = Enum.Font.Gotham
+StatusTxt.TextSize = 12
 
-local LDiscordBtn = Instance.new("TextButton", LoginCard)
-LDiscordBtn.Size = UDim2.new(1, -60, 0, 40)
-LDiscordBtn.Position = UDim2.new(0, 30, 1, -60)
-LDiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
-LDiscordBtn.Text = "Rejoindre le Discord Officiel"
-LDiscordBtn.Font = Enum.Font.GothamMedium
-LDiscordBtn.TextSize = 12
-LDiscordBtn.TextColor3 = Colors.TextWhite
-Instance.new("UICorner", LDiscordBtn).CornerRadius = UDim.new(0, 8)
-ApplyHover(LDiscordBtn, 1.02)
+local DiscordBtn = Instance.new("TextButton", LoginCard)
+DiscordBtn.Size = UDim2.new(1, -80, 0, 45)
+DiscordBtn.Position = UDim2.new(0, 40, 1, -70)
+DiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+DiscordBtn.Text = "Rejoindre le Discord Officiel"
+DiscordBtn.Font = Enum.Font.GothamBold
+DiscordBtn.TextSize = 13
+DiscordBtn.TextColor3 = Theme.TextWhite
+Instance.new("UICorner", DiscordBtn).CornerRadius = UDim.new(0, 8)
 
 -- ==========================================
--- 🎛️ TABLEAU DE BORD (DASHBOARD REDESIGN)
+-- 🎛️ DASHBOARD COMPLET (SaaS Interface)
 -- ==========================================
-local DashView = Instance.new("Frame", MainApp)
-DashView.Size = UDim2.new(1, 0, 1, 0)
-DashView.BackgroundTransparency = 1
-DashView.Visible = false
+local DashScreen = Instance.new("Frame", AppWindow)
+DashScreen.Size = UDim2.new(1, 0, 1, 0)
+DashScreen.Position = UDim2.new(1, 0, 0, 0) 
+DashScreen.BackgroundTransparency = 1
 
--- SIDEBAR
-local Sidebar = Instance.new("Frame", DashView)
+-- COLONNE GAUCHE : Sidebar
+local Sidebar = Instance.new("Frame", DashScreen)
 Sidebar.Size = UDim2.new(0, 220, 1, 0)
-Sidebar.BackgroundColor3 = Colors.CardBg
+Sidebar.BackgroundColor3 = Theme.CardBg
 Sidebar.BorderSizePixel = 0
-local SideBorder = Instance.new("Frame", Sidebar)
-SideBorder.Size = UDim2.new(0, 1, 1, 0)
-SideBorder.Position = UDim2.new(1, 0, 0, 0)
-SideBorder.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-SideBorder.BorderSizePixel = 0
+
+local SidebarLine = Instance.new("Frame", Sidebar)
+SidebarLine.Size = UDim2.new(0, 1, 1, 0)
+SidebarLine.Position = UDim2.new(1, 0, 0, 0)
+SidebarLine.BackgroundColor3 = Theme.Border
+SidebarLine.BorderSizePixel = 0
 
 local DLogo = Instance.new("TextLabel", Sidebar)
 DLogo.Size = UDim2.new(1, 0, 0, 80)
 DLogo.BackgroundTransparency = 1
-DLogo.Text = "H I R O S H I"
+DLogo.Text = "IA NEXUS"
 DLogo.Font = Enum.Font.GothamBlack
-DLogo.TextSize = 18
-DLogo.TextColor3 = Colors.TextWhite
+DLogo.TextSize = 20
+DLogo.TextColor3 = Theme.Cyan
 
-local MenuBtn = Instance.new("Frame", Sidebar)
-MenuBtn.Size = UDim2.new(1, -40, 0, 45)
-MenuBtn.Position = UDim2.new(0, 20, 0, 90)
-MenuBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 45)
-Instance.new("UICorner", MenuBtn).CornerRadius = UDim.new(0, 8)
-Instance.new("UIStroke", MenuBtn).Color = Colors.Purple
-local MenuIcon = Instance.new("TextLabel", MenuBtn)
-MenuIcon.Size = UDim2.new(0, 40, 1, 0)
-MenuIcon.BackgroundTransparency = 1
-MenuIcon.Text = "🧠"
-MenuIcon.Font = Enum.Font.Gotham
-MenuIcon.TextSize = 16
-local MenuTxt = Instance.new("TextLabel", MenuBtn)
-MenuTxt.Size = UDim2.new(1, -40, 1, 0)
-MenuTxt.Position = UDim2.new(0, 40, 0, 0)
+local ActiveMenu = Instance.new("Frame", Sidebar)
+ActiveMenu.Size = UDim2.new(1, -30, 0, 45)
+ActiveMenu.Position = UDim2.new(0, 15, 0, 90)
+ActiveMenu.BackgroundColor3 = Theme.Purple
+ActiveMenu.BackgroundTransparency = 0.1
+Instance.new("UICorner", ActiveMenu).CornerRadius = UDim.new(0, 8)
+local MenuTxt = Instance.new("TextLabel", ActiveMenu)
+MenuTxt.Size = UDim2.new(1, 0, 1, 0)
 MenuTxt.BackgroundTransparency = 1
-MenuTxt.Text = "Neural A.I. Core"
+MenuTxt.Text = "🧠 IA Nexus Core"
 MenuTxt.Font = Enum.Font.GothamBold
 MenuTxt.TextSize = 13
-MenuTxt.TextColor3 = Colors.TextWhite
-MenuTxt.TextXAlignment = Enum.TextXAlignment.Left
+MenuTxt.TextColor3 = Theme.TextWhite
 
--- PROFIL UTILISATEUR (Dans la sidebar en bas)
+-- Carte de Profil
 local ProfileCard = Instance.new("Frame", Sidebar)
-ProfileCard.Size = UDim2.new(1, -40, 0, 60)
-ProfileCard.Position = UDim2.new(0, 20, 1, -80)
-ProfileCard.BackgroundColor3 = Colors.AppBg
+ProfileCard.Size = UDim2.new(1, -30, 0, 65)
+ProfileCard.Position = UDim2.new(0, 15, 1, -80)
+ProfileCard.BackgroundColor3 = Theme.DeepSpace
 Instance.new("UICorner", ProfileCard).CornerRadius = UDim.new(0, 10)
-Instance.new("UIStroke", ProfileCard).Color = Color3.fromRGB(40, 40, 50)
+Instance.new("UIStroke", ProfileCard).Color = Theme.Border
 
 local Avatar = Instance.new("ImageLabel", ProfileCard)
-Avatar.Size = UDim2.new(0, 36, 0, 36)
-Avatar.Position = UDim2.new(0, 12, 0.5, -18)
-Avatar.BackgroundColor3 = Colors.CardBg
+Avatar.Size = UDim2.new(0, 40, 0, 40)
+Avatar.Position = UDim2.new(0, 12, 0.5, -20)
+Avatar.BackgroundColor3 = Theme.CardBg
 Instance.new("UICorner", Avatar).CornerRadius = UDim.new(1, 0)
 Avatar.Image = "rbxthumb://type=AvatarHeadShot&id="..LP.UserId.."&w=48&h=48"
 
-local OnlineDot = Instance.new("Frame", Avatar)
-OnlineDot.Size = UDim2.new(0, 10, 0, 10)
-OnlineDot.Position = UDim2.new(1, -8, 1, -8)
-OnlineDot.BackgroundColor3 = Colors.Success
-Instance.new("UICorner", OnlineDot).CornerRadius = UDim.new(1, 0)
-Instance.new("UIStroke", OnlineDot).Color = Colors.AppBg
-
 local PName = Instance.new("TextLabel", ProfileCard)
-PName.Size = UDim2.new(1, -60, 0, 18)
-PName.Position = UDim2.new(0, 58, 0, 12)
+PName.Size = UDim2.new(1, -70, 0, 20)
+PName.Position = UDim2.new(0, 65, 0, 12)
 PName.BackgroundTransparency = 1
 PName.Text = LP.Name
 PName.Font = Enum.Font.GothamBold
-PName.TextSize = 12
-PName.TextColor3 = Colors.TextWhite
+PName.TextSize = 13
+PName.TextColor3 = Theme.TextWhite
 PName.TextXAlignment = Enum.TextXAlignment.Left
 
 local PRank = Instance.new("TextLabel", ProfileCard)
-PRank.Size = UDim2.new(1, -60, 0, 15)
-PRank.Position = UDim2.new(0, 58, 0, 32)
+PRank.Size = UDim2.new(1, -70, 0, 15)
+PRank.Position = UDim2.new(0, 65, 0, 32)
 PRank.BackgroundTransparency = 1
-PRank.Text = "Licence Lifetime 💎"
+PRank.Text = "Licence Nexus 💎"
 PRank.Font = Enum.Font.GothamMedium
-PRank.TextSize = 10
-PRank.TextColor3 = Colors.Cyan
+PRank.TextSize = 11
+PRank.TextColor3 = Theme.Cyan
 PRank.TextXAlignment = Enum.TextXAlignment.Left
 
--- CONTENU DROITE (Dashboard)
-local Content = Instance.new("Frame", DashView)
-Content.Size = UDim2.new(1, -220, 1, 0)
-Content.Position = UDim2.new(0, 220, 0, 0)
-Content.BackgroundTransparency = 1
+-- COLONNE CENTRALE : Aimbot & Stats
+local CenterCol = Instance.new("Frame", DashScreen)
+CenterCol.Size = UDim2.new(0, 360, 1, 0)
+CenterCol.Position = UDim2.new(0, 240, 0, 0)
+CenterCol.BackgroundTransparency = 1
 
--- Header Top
-local TopHeader = Instance.new("Frame", Content)
-TopHeader.Size = UDim2.new(1, 0, 0, 80)
-TopHeader.BackgroundTransparency = 1
+local HeaderTxt = Instance.new("TextLabel", CenterCol)
+HeaderTxt.Size = UDim2.new(1, 0, 0, 80)
+HeaderTxt.BackgroundTransparency = 1
+HeaderTxt.Text = "Vue d'Ensemble"
+HeaderTxt.Font = Enum.Font.GothamBold
+HeaderTxt.TextSize = 18
+HeaderTxt.TextColor3 = Theme.TextWhite
+HeaderTxt.TextXAlignment = Enum.TextXAlignment.Left
 
-local WelcomeMsg = Instance.new("TextLabel", TopHeader)
-WelcomeMsg.Size = UDim2.new(0, 300, 0, 30)
-WelcomeMsg.Position = UDim2.new(0, 30, 0, 25)
-WelcomeMsg.BackgroundTransparency = 1
-WelcomeMsg.Text = "Tableau de Bord / Aperçu"
-WelcomeMsg.Font = Enum.Font.GothamBold
-WelcomeMsg.TextSize = 16
-WelcomeMsg.TextColor3 = Colors.TextWhite
-WelcomeMsg.TextXAlignment = Enum.TextXAlignment.Left
-
-local TimeLbl = Instance.new("TextLabel", TopHeader)
-TimeLbl.Size = UDim2.new(0, 100, 0, 30)
-TimeLbl.Position = UDim2.new(1, -130, 0, 25)
-TimeLbl.BackgroundTransparency = 1
-TimeLbl.Font = Enum.Font.GothamMedium
-TimeLbl.TextSize = 13
-TimeLbl.TextColor3 = Colors.TextGray
-TimeLbl.TextXAlignment = Enum.TextXAlignment.Right
-RS.RenderStepped:Connect(function()
-    local d = os.date("*t")
-    TimeLbl.Text = string.format("%02d:%02d:%02d", d.hour, d.min, d.sec)
-end)
-
--- CARTE PRINCIPALE : AIMBOT ENGINE
-local EngineCard = Instance.new("Frame", Content)
-EngineCard.Size = UDim2.new(1, -60, 0, 160)
-EngineCard.Position = UDim2.new(0, 30, 0, 80)
-EngineCard.BackgroundColor3 = Colors.CardBg
+local EngineCard = Instance.new("Frame", CenterCol)
+EngineCard.Size = UDim2.new(1, 0, 0, 180)
+EngineCard.Position = UDim2.new(0, 0, 0, 80)
+EngineCard.BackgroundColor3 = Theme.CardBg
 Instance.new("UICorner", EngineCard).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", EngineCard).Color = Color3.fromRGB(40, 40, 55)
+Instance.new("UIStroke", EngineCard).Color = Theme.Border
 
 local ETitle = Instance.new("TextLabel", EngineCard)
 ETitle.Size = UDim2.new(1, -40, 0, 30)
-ETitle.Position = UDim2.new(0, 25, 0, 20)
+ETitle.Position = UDim2.new(0, 20, 0, 20)
 ETitle.BackgroundTransparency = 1
-ETitle.Text = "Configuration Neurale"
+ETitle.Text = "Configuration IA Nexus"
 ETitle.Font = Enum.Font.GothamBold
 ETitle.TextSize = 15
-ETitle.TextColor3 = Colors.TextWhite
+ETitle.TextColor3 = Theme.TextWhite
 ETitle.TextXAlignment = Enum.TextXAlignment.Left
 
 local EDesc = Instance.new("TextLabel", EngineCard)
-EDesc.Size = UDim2.new(1, -40, 0, 35)
-EDesc.Position = UDim2.new(0, 25, 0, 50)
+EDesc.Size = UDim2.new(1, -40, 0, 40)
+EDesc.Position = UDim2.new(0, 20, 0, 50)
 EDesc.BackgroundTransparency = 1
-EDesc.Text = "Le système analyse l'environnement 3D en temps réel pour verrouiller les objets spatiaux de manière chirurgicale."
+EDesc.Text = "Analyse de l'environnement 3D en temps réel pour un verrouillage spatial absolu et indétectable."
 EDesc.Font = Enum.Font.Gotham
 EDesc.TextSize = 12
-EDesc.TextColor3 = Colors.TextGray
+EDesc.TextColor3 = Theme.TextMuted
 EDesc.TextXAlignment = Enum.TextXAlignment.Left
 EDesc.TextWrapped = true
 
--- Switch iOS / Premium
-local SwitchLabel = Instance.new("TextLabel", EngineCard)
-SwitchLabel.Size = UDim2.new(0, 200, 0, 30)
-SwitchLabel.Position = UDim2.new(0, 25, 1, -45)
-SwitchLabel.BackgroundTransparency = 1
-SwitchLabel.Text = "Activer l'Engine (Touche X)"
-SwitchLabel.Font = Enum.Font.GothamMedium
-SwitchLabel.TextSize = 13
-SwitchLabel.TextColor3 = Colors.TextWhite
-SwitchLabel.TextXAlignment = Enum.TextXAlignment.Left
+local SwitchLbl = Instance.new("TextLabel", EngineCard)
+SwitchLbl.Size = UDim2.new(0, 200, 0, 30)
+SwitchLbl.Position = UDim2.new(0, 20, 1, -50)
+SwitchLbl.BackgroundTransparency = 1
+SwitchLbl.Text = "Activer l'I.A. (Touche X)"
+SwitchLbl.Font = Enum.Font.GothamMedium
+SwitchLbl.TextSize = 13
+SwitchLbl.TextColor3 = Theme.TextWhite
+SwitchLbl.TextXAlignment = Enum.TextXAlignment.Left
 
 local ToggleBg = Instance.new("Frame", EngineCard)
-ToggleBg.Size = UDim2.new(0, 54, 0, 28)
-ToggleBg.Position = UDim2.new(1, -80, 1, -45)
-ToggleBg.BackgroundColor3 = Colors.AppBg
+ToggleBg.Size = UDim2.new(0, 56, 0, 28)
+ToggleBg.Position = UDim2.new(1, -76, 1, -50)
+ToggleBg.BackgroundColor3 = Theme.DeepSpace
 Instance.new("UICorner", ToggleBg).CornerRadius = UDim.new(1, 0)
 local ToggleStroke = Instance.new("UIStroke", ToggleBg)
-ToggleStroke.Color = Color3.fromRGB(60, 60, 75)
+ToggleStroke.Color = Theme.Border
 
 local ToggleKnob = Instance.new("Frame", ToggleBg)
 ToggleKnob.Size = UDim2.new(0, 20, 0, 20)
 ToggleKnob.Position = UDim2.new(0, 4, 0.5, -10)
-ToggleKnob.BackgroundColor3 = Colors.TextGray
+ToggleKnob.BackgroundColor3 = Theme.TextMuted
 Instance.new("UICorner", ToggleKnob).CornerRadius = UDim.new(1, 0)
 
 local ToggleBtn = Instance.new("TextButton", ToggleBg)
@@ -417,222 +371,235 @@ ToggleBtn.Size = UDim2.new(1, 0, 1, 0)
 ToggleBtn.BackgroundTransparency = 1
 ToggleBtn.Text = ""
 
--- GRILLE DU BAS (Stats & Discord)
-local BottomGrid = Instance.new("Frame", Content)
-BottomGrid.Size = UDim2.new(1, -60, 0, 110)
-BottomGrid.Position = UDim2.new(0, 30, 0, 260)
-BottomGrid.BackgroundTransparency = 1
+-- Section Statistiques
+local StatContainer = Instance.new("Frame", CenterCol)
+StatContainer.Size = UDim2.new(1, 0, 0, 110)
+StatContainer.Position = UDim2.new(0, 0, 0, 280)
+StatContainer.BackgroundTransparency = 1
 
-local UIListLayout = Instance.new("UIListLayout", BottomGrid)
-UIListLayout.FillDirection = Enum.FillDirection.Horizontal
-UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.SpaceBetween
-
--- Card: Cibles
-local StatCard1 = Instance.new("Frame", BottomGrid)
-StatCard1.Size = UDim2.new(0.31, 0, 1, 0)
-StatCard1.BackgroundColor3 = Colors.CardBg
+local StatCard1 = Instance.new("Frame", StatContainer)
+StatCard1.Size = UDim2.new(0.48, 0, 1, 0)
+StatCard1.BackgroundColor3 = Theme.CardBg
 Instance.new("UICorner", StatCard1).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", StatCard1).Color = Color3.fromRGB(40, 40, 55)
-ApplyHover(StatCard1, 1.02, Colors.CardHover)
+Instance.new("UIStroke", StatCard1).Color = Theme.Border
 
-local S1Icon = Instance.new("TextLabel", StatCard1)
-S1Icon.Size = UDim2.new(1, 0, 0, 30)
-S1Icon.Position = UDim2.new(0, 0, 0, 15)
-S1Icon.BackgroundTransparency = 1
-S1Icon.Text = "🎯"
-S1Icon.Font = Enum.Font.Gotham
-S1Icon.TextSize = 18
 local S1Title = Instance.new("TextLabel", StatCard1)
 S1Title.Size = UDim2.new(1, 0, 0, 20)
-S1Title.Position = UDim2.new(0, 0, 0, 45)
+S1Title.Position = UDim2.new(0, 0, 0, 20)
 S1Title.BackgroundTransparency = 1
-S1Title.Text = "Cibles Éliminées"
+S1Title.Text = "CIBLES ÉLIMINÉES"
 S1Title.Font = Enum.Font.GothamMedium
 S1Title.TextSize = 11
-S1Title.TextColor3 = Colors.TextGray
+S1Title.TextColor3 = Theme.TextMuted
 local HitsDisplay = Instance.new("TextLabel", StatCard1)
-HitsDisplay.Size = UDim2.new(1, 0, 0, 30)
-HitsDisplay.Position = UDim2.new(0, 0, 0, 65)
+HitsDisplay.Size = UDim2.new(1, 0, 0, 40)
+HitsDisplay.Position = UDim2.new(0, 0, 0, 45)
 HitsDisplay.BackgroundTransparency = 1
 HitsDisplay.Text = "0"
 HitsDisplay.Font = Enum.Font.GothamBlack
-HitsDisplay.TextSize = 22
-HitsDisplay.TextColor3 = Colors.Cyan
+HitsDisplay.TextSize = 28
+HitsDisplay.TextColor3 = Theme.Cyan
 
--- Card: Précision
-local StatCard2 = Instance.new("Frame", BottomGrid)
-StatCard2.Size = UDim2.new(0.31, 0, 1, 0)
-StatCard2.BackgroundColor3 = Colors.CardBg
+local StatCard2 = Instance.new("Frame", StatContainer)
+StatCard2.Size = UDim2.new(0.48, 0, 1, 0)
+StatCard2.Position = UDim2.new(0.52, 0, 0, 0)
+StatCard2.BackgroundColor3 = Theme.CardBg
 Instance.new("UICorner", StatCard2).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", StatCard2).Color = Color3.fromRGB(40, 40, 55)
-ApplyHover(StatCard2, 1.02, Colors.CardHover)
+Instance.new("UIStroke", StatCard2).Color = Theme.Border
 
-local S2Icon = Instance.new("TextLabel", StatCard2)
-S2Icon.Size = UDim2.new(1, 0, 0, 30)
-S2Icon.Position = UDim2.new(0, 0, 0, 15)
-S2Icon.BackgroundTransparency = 1
-S2Icon.Text = "⚡"
-S2Icon.Font = Enum.Font.Gotham
-S2Icon.TextSize = 18
 local S2Title = Instance.new("TextLabel", StatCard2)
 S2Title.Size = UDim2.new(1, 0, 0, 20)
-S2Title.Position = UDim2.new(0, 0, 0, 45)
+S2Title.Position = UDim2.new(0, 0, 0, 20)
 S2Title.BackgroundTransparency = 1
-S2Title.Text = "Précision IA"
+S2Title.Text = "PRÉCISION NEXUS"
 S2Title.Font = Enum.Font.GothamMedium
 S2Title.TextSize = 11
-S2Title.TextColor3 = Colors.TextGray
+S2Title.TextColor3 = Theme.TextMuted
 local AccDisplay = Instance.new("TextLabel", StatCard2)
-AccDisplay.Size = UDim2.new(1, 0, 0, 30)
-AccDisplay.Position = UDim2.new(0, 0, 0, 65)
+AccDisplay.Size = UDim2.new(1, 0, 0, 40)
+AccDisplay.Position = UDim2.new(0, 0, 0, 45)
 AccDisplay.BackgroundTransparency = 1
 AccDisplay.Text = "99.9%"
 AccDisplay.Font = Enum.Font.GothamBlack
-AccDisplay.TextSize = 22
-AccDisplay.TextColor3 = Colors.Purple
+AccDisplay.TextSize = 28
+AccDisplay.TextColor3 = Theme.Purple
 
--- Card: Discord
-local DiscordCard = Instance.new("Frame", BottomGrid)
-DiscordCard.Size = UDim2.new(0.31, 0, 1, 0)
-DiscordCard.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
-Instance.new("UICorner", DiscordCard).CornerRadius = UDim.new(0, 12)
-ApplyHover(DiscordCard, 1.02)
+-- COLONNE DROITE : Console Système & Discord
+local RightCol = Instance.new("Frame", DashScreen)
+RightCol.Size = UDim2.new(0, 210, 1, 0)
+RightCol.Position = UDim2.new(0, 620, 0, 0)
+RightCol.BackgroundTransparency = 1
 
-local DIcon = Instance.new("TextLabel", DiscordCard)
-DIcon.Size = UDim2.new(1, 0, 0, 30)
-DIcon.Position = UDim2.new(0, 0, 0, 15)
-DIcon.BackgroundTransparency = 1
-DIcon.Text = "💬"
-DIcon.Font = Enum.Font.Gotham
-DIcon.TextSize = 22
-local DTitle = Instance.new("TextLabel", DiscordCard)
+local ConsoleCard = Instance.new("Frame", RightCol)
+ConsoleCard.Size = UDim2.new(1, 0, 0, 260)
+ConsoleCard.Position = UDim2.new(0, 0, 0, 80)
+ConsoleCard.BackgroundColor3 = Theme.CardBg
+Instance.new("UICorner", ConsoleCard).CornerRadius = UDim.new(0, 12)
+Instance.new("UIStroke", ConsoleCard).Color = Theme.Border
+
+local CTitle = Instance.new("TextLabel", ConsoleCard)
+CTitle.Size = UDim2.new(1, -30, 0, 30)
+CTitle.Position = UDim2.new(0, 15, 0, 15)
+CTitle.BackgroundTransparency = 1
+CTitle.Text = "Console Nexus"
+CTitle.Font = Enum.Font.GothamBold
+CTitle.TextSize = 13
+CTitle.TextColor3 = Theme.TextWhite
+CTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+local LogContainer = Instance.new("ScrollingFrame", ConsoleCard)
+LogContainer.Size = UDim2.new(1, -30, 1, -60)
+LogContainer.Position = UDim2.new(0, 15, 0, 50)
+LogContainer.BackgroundTransparency = 1
+LogContainer.BorderSizePixel = 0
+LogContainer.ScrollBarThickness = 2
+local UIListLog = Instance.new("UIListLayout", LogContainer)
+UIListLog.Padding = UDim.new(0, 8)
+
+local function AddLog(text, color)
+    local log = Instance.new("TextLabel", LogContainer)
+    log.Size = UDim2.new(1, 0, 0, 15)
+    log.BackgroundTransparency = 1
+    log.Text = text
+    log.Font = Enum.Font.Code
+    log.TextSize = 10
+    log.TextColor3 = color or Theme.TextMuted
+    log.TextXAlignment = Enum.TextXAlignment.Left
+    log.TextWrapped = true
+end
+AddLog("[SYS] Boot sequence complete.", Theme.Success)
+AddLog("[SYS] By Hiroshi738 Loaded.", Theme.TextMuted)
+AddLog("[NET] Connected to Nexus Server.", Theme.Cyan)
+
+local DCard = Instance.new("Frame", RightCol)
+DCard.Size = UDim2.new(1, 0, 0, 110)
+DCard.Position = UDim2.new(0, 0, 0, 360)
+DCard.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+Instance.new("UICorner", DCard).CornerRadius = UDim.new(0, 12)
+
+local DTitle = Instance.new("TextLabel", DCard)
 DTitle.Size = UDim2.new(1, 0, 0, 20)
-DTitle.Position = UDim2.new(0, 0, 0, 45)
+DTitle.Position = UDim2.new(0, 0, 0, 20)
 DTitle.BackgroundTransparency = 1
 DTitle.Text = "Communauté"
-DTitle.Font = Enum.Font.GothamMedium
-DTitle.TextSize = 11
+DTitle.Font = Enum.Font.GothamBold
+DTitle.TextSize = 14
 DTitle.TextColor3 = Color3.new(1,1,1)
-local DCopyBtn = Instance.new("TextButton", DiscordCard)
-DCopyBtn.Size = UDim2.new(0, 100, 0, 26)
-DCopyBtn.Position = UDim2.new(0.5, -50, 0, 70)
-DCopyBtn.BackgroundColor3 = Color3.fromRGB(70, 80, 200)
-DCopyBtn.Text = "Copier le Lien"
-DCopyBtn.Font = Enum.Font.GothamBold
-DCopyBtn.TextSize = 11
-DCopyBtn.TextColor3 = Color3.new(1,1,1)
-Instance.new("UICorner", DCopyBtn).CornerRadius = UDim.new(0, 6)
 
-local InfoFooter = Instance.new("TextLabel", Content)
-InfoFooter.Size = UDim2.new(1, 0, 0, 20)
-InfoFooter.Position = UDim2.new(0, 0, 1, -35)
-InfoFooter.BackgroundTransparency = 1
-InfoFooter.Text = "Mode Furtif : Appuyez sur [CTRL] pour cacher l'interface."
-InfoFooter.Font = Enum.Font.Gotham
-InfoFooter.TextSize = 11
-InfoFooter.TextColor3 = Color3.fromRGB(100, 100, 115)
+local CopyBtn = Instance.new("TextButton", DCard)
+CopyBtn.Size = UDim2.new(0, 140, 0, 35)
+CopyBtn.Position = UDim2.new(0.5, -70, 0, 55)
+CopyBtn.BackgroundColor3 = Color3.fromRGB(70, 80, 200)
+CopyBtn.Text = "Rejoindre le Discord"
+CopyBtn.Font = Enum.Font.GothamBold
+CopyBtn.TextSize = 11
+CopyBtn.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", CopyBtn).CornerRadius = UDim.new(0, 8)
 
 -- ==========================================
--- 🔄 LOGIQUE ET ANIMATIONS
+-- 🔄 LOGIQUE ET ANIMATIONS PARFAITES
 -- ==========================================
 
--- Animation de lancement
-MainApp.Size = UDim2.new(0, 700, 0, 430)
-TS:Create(MainApp, TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {GroupTransparency = 0, Size = UDim2.new(0, 780, 0, 480)}):Play()
+-- Effets de survol (Hover)
+local function AddHover(btn, scale, color)
+    local origSize = btn.Size
+    local origColor = btn.BackgroundColor3
+    btn.MouseEnter:Connect(function()
+        TS:Create(btn, TweenInfo.new(0.2), {Size = UDim2.new(origSize.X.Scale, origSize.X.Offset*scale, origSize.Y.Scale, origSize.Y.Offset*scale)}):Play()
+        if color then TS:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = color}):Play() end
+    end)
+    btn.MouseLeave:Connect(function()
+        TS:Create(btn, TweenInfo.new(0.2), {Size = origSize}):Play()
+        if color then TS:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = origColor}):Play() end
+    end)
+end
+AddHover(AuthBtn, 1.02)
+AddHover(DiscordBtn, 1.02)
+AddHover(CopyBtn, 1.05)
 
--- Logique Discord (Login & Dashboard)
-local function CopyDiscord()
+-- Logique Discord
+local function CopyLink(btn)
     if setclipboard then
         setclipboard(DISCORD_LINK)
-        DCopyBtn.Text = "Copié !"
-        DCopyBtn.BackgroundColor3 = Colors.Success
+        btn.Text = "Lien Copié !"
+        btn.BackgroundColor3 = Theme.Success
         task.wait(2)
-        DCopyBtn.Text = "Copier le Lien"
-        DCopyBtn.BackgroundColor3 = Color3.fromRGB(70, 80, 200)
+        btn.Text = "Rejoindre le Discord"
+        btn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
     end
 end
-LDiscordBtn.MouseButton1Click:Connect(CopyDiscord)
-DCopyBtn.MouseButton1Click:Connect(CopyDiscord)
+DiscordBtn.MouseButton1Click:Connect(function() CopyLink(DiscordBtn) end)
+CopyBtn.MouseButton1Click:Connect(function() CopyLink(CopyBtn) end)
 
--- LOGIQUE DE CONNEXION (Sans bug d'écran noir)
+-- LOGIQUE DE CONNEXION SANS BUG
 AuthBtn.MouseButton1Click:Connect(function()
-    AuthBtn.Text = "Analyse neurale..."
-    LoginStatus.Text = "Vérification de la clé de licence dans la base de données..."
-    LoginStatus.TextColor3 = Colors.TextGray
+    AuthBtn.Text = "Vérification..."
+    StatusTxt.Text = "Analyse de la signature Nexus..."
+    StatusTxt.TextColor3 = Theme.TextMuted
     
-    task.wait(0.6) -- Délai premium
+    task.wait(0.6)
     
     if PassInput.Text == PASSWORD then
-        LoginStatus.Text = "Accès autorisé. Chargement du profil..."
-        LoginStatus.TextColor3 = Colors.Success
-        AuthBtn.BackgroundColor3 = Colors.Success
+        StatusTxt.Text = "Accès Autorisé. Bienvenue."
+        StatusTxt.TextColor3 = Theme.Success
+        AuthBtn.BackgroundColor3 = Theme.Success
         AuthBtn.Text = "Connecté"
         
         task.wait(0.5)
         
-        -- Transition Parfaite (Fade Out Login)
-        local fadeOut = TS:Create(LoginView, TweenInfo.new(0.4), {BackgroundTransparency = 1})
-        for _, v in ipairs(LoginView:GetDescendants()) do
-            if v:IsA("TextLabel") or v:IsA("TextBox") or v:IsA("TextButton") then
-                TS:Create(v, TweenInfo.new(0.4), {TextTransparency = 1, BackgroundTransparency = 1}):Play()
-            elseif v:IsA("Frame") or v:IsA("ImageLabel") then
-                TS:Create(v, TweenInfo.new(0.4), {BackgroundTransparency = 1, ImageTransparency = 1}):Play()
-            end
-        end
-        fadeOut:Play()
-        fadeOut.Completed:Wait()
+        -- Animation parfaite de transition (Slide Out / Slide In)
+        local slideOut = TS:Create(LoginScreen, TweenInfo.new(0.6, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Position = UDim2.new(-1, 0, 0, 0)})
+        slideOut:Play()
+        slideOut.Completed:Wait()
         
-        LoginView.Visible = false
+        LoginScreen.Visible = false
         
-        -- Fade In Dashboard
-        DashView.Visible = true
-        for _, v in ipairs(DashView:GetDescendants()) do
-            if v:IsA("TextLabel") or v:IsA("TextButton") then
-                v.TextTransparency = 1
-                TS:Create(v, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
-            end
-        end
+        -- Apparition du Dashboard
+        TS:Create(DashScreen, TweenInfo.new(0.8, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
         IsAuthenticated = true
+        AddLog("[NEXUS] Engine ready for deployment.", Theme.Purple)
     else
-        LoginStatus.Text = "Erreur : Clé de licence invalide ou expirée."
-        LoginStatus.TextColor3 = Colors.Danger
+        StatusTxt.Text = "Erreur : Licence invalide."
+        StatusTxt.TextColor3 = Theme.Danger
         AuthBtn.Text = "Réessayer"
         
-        local origX = InputContainer.Position.X.Offset
+        local origX = InputBg.Position.X.Offset
         for i = 1, 4 do
-            InputContainer.Position = UDim2.new(0, origX + (i%2==0 and 6 or -6), 0, 130)
+            InputBg.Position = UDim2.new(0, origX + (i%2==0 and 6 or -6), 0, 160)
             task.wait(0.05)
         end
-        InputContainer.Position = UDim2.new(0, origX, 0, 130)
+        InputBg.Position = UDim2.new(0, origX, 0, 160)
     end
 end)
 
 -- Switch Aimbot
-local function ToggleEngine()
+local function ToggleAimbot()
     if not IsAuthenticated then return end
     AutoHit = not AutoHit
     
     local endPos = AutoHit and UDim2.new(1, -24, 0.5, -10) or UDim2.new(0, 4, 0.5, -10)
-    local endBg = AutoHit and Colors.Cyan or Colors.AppBg
-    local endKnob = AutoHit and Colors.AppBg or Colors.TextGray
+    local endBg = AutoHit and Theme.Cyan or Theme.DeepSpace
+    local endKnob = AutoHit and Theme.DeepSpace or Theme.TextMuted
     
     TS:Create(ToggleKnob, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = endPos, BackgroundColor3 = endKnob}):Play()
     TS:Create(ToggleBg, TweenInfo.new(0.3), {BackgroundColor3 = endBg}):Play()
-    TS:Create(ToggleStroke, TweenInfo.new(0.3), {Color = AutoHit and Colors.Cyan or Color3.fromRGB(60, 60, 75)}):Play()
+    TS:Create(ToggleStroke, TweenInfo.new(0.3), {Color = AutoHit and Theme.Cyan or Theme.Border}):Play()
     
     if AutoHit then
-        EngineCard.UIStroke.Color = Colors.Cyan
+        TS:Create(EngineCard.UIStroke, TweenInfo.new(0.3), {Color = Theme.Cyan}):Play()
+        AddLog("[NEXUS] Tracking system ACTIVATED.", Theme.Success)
     else
-        EngineCard.UIStroke.Color = Color3.fromRGB(40, 40, 55)
+        TS:Create(EngineCard.UIStroke, TweenInfo.new(0.3), {Color = Theme.Border}):Play()
+        AddLog("[NEXUS] Tracking system OFFLINE.", Theme.Danger)
     end
 end
-ToggleBtn.MouseButton1Click:Connect(ToggleEngine)
+ToggleBtn.MouseButton1Click:Connect(ToggleAimbot)
 
 -- Dragging Fenêtre
 local dragging, dragInput, dragStart, startPos
-MainApp.InputBegan:Connect(function(input)
+AppWindow.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true dragStart = input.Position startPos = MainApp.Position
+        dragging = true dragStart = input.Position startPos = AppWindow.Position
     end
 end)
 UIS.InputEnded:Connect(function(input)
@@ -644,27 +611,25 @@ end)
 RS.RenderStepped:Connect(function()
     if dragging and dragInput then
         local delta = dragInput.Position - dragStart
-        MainApp.Position = MainApp.Position:Lerp(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y), 0.15)
+        AppWindow.Position = AppWindow.Position:Lerp(UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y), 0.2)
     end
 end)
 
--- Raccourcis & Stream Proof
+-- Raccourcis & Stream Proof (Le cosmos reste TOUJOURS visible)
 UIS.InputBegan:Connect(function(i, g)
     if g then return end
     if i.KeyCode == Enum.KeyCode.X and IsAuthenticated then
-        ToggleEngine()
+        ToggleAimbot()
     elseif (i.KeyCode == Enum.KeyCode.LeftControl or i.KeyCode == Enum.KeyCode.RightControl) then
         MenuVisible = not MenuVisible
         if MenuVisible then
-            MainApp.Visible = true
-            CosmicLayer.Visible = true 
-            TS:Create(MainApp, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {GroupTransparency = 0, Size = UDim2.new(0, 780, 0, 480)}):Play()
+            AppWindow.Visible = true
+            TS:Create(AppWindow, TweenInfo.new(0.5, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), {Size = UDim2.new(0, 850, 0, 500)}):Play()
         else
-            local t = TS:Create(MainApp, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {GroupTransparency = 1, Size = UDim2.new(0, 750, 0, 450)})
+            local t = TS:Create(AppWindow, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 800, 0, 450)})
             t:Play()
             t.Completed:Wait()
-            MainApp.Visible = false
-            CosmicLayer.Visible = false 
+            AppWindow.Visible = false
         end
     elseif i.KeyCode == Enum.KeyCode.Delete then 
         SG:Destroy()
