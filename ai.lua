@@ -1,7 +1,7 @@
 --[[
     =======================================================================
     🌌 NEXUS A.I. - BY HIROSHI738 (PRO EDITION)
-    💎 Telemetry Fixed | Zero-Bug Rendering | Stream-Proof | Themes
+    💎 Telemetry Center Fix | Zero-Bug | Stream-Proof | Themes
     =======================================================================
 ]]
 
@@ -205,11 +205,10 @@ StatusTxt.Font = Enum.Font.Gotham
 StatusTxt.TextSize = 12
 
 -- ==========================================
--- 🎛️ DASHBOARD & SETTINGS
+-- 🎛️ DASHBOARD & SETTINGS NAVIGATION
 -- ==========================================
--- Le MainContent laisse 25px de place en bas pour le Footer (Telemetry)
 local MainContent = Instance.new("Frame", AppWindow)
-MainContent.Size = UDim2.new(1, 0, 1, -25) 
+MainContent.Size = UDim2.new(1, 0, 1, -25) -- Laisse 25px d'espace en bas pour le footer
 MainContent.BackgroundTransparency = 1
 MainContent.Visible = false 
 
@@ -240,7 +239,7 @@ TabDashBtn.BackgroundColor3 = CurrentTheme.Secondary
 TabDashBtn.BackgroundTransparency = 0.15
 TabDashBtn.Text = "  🧠 A.I. Core"
 TabDashBtn.Font = Enum.Font.GothamBold
-TabDashBtn.TextSize = 12
+TabDashBtn.TextSize = 13
 TabDashBtn.TextColor3 = BaseColors.White
 TabDashBtn.TextXAlignment = Enum.TextXAlignment.Left
 Instance.new("UICorner", TabDashBtn).CornerRadius = UDim.new(0, 8)
@@ -253,11 +252,12 @@ TabSettingsBtn.BackgroundColor3 = BaseColors.Bg
 TabSettingsBtn.BackgroundTransparency = 0
 TabSettingsBtn.Text = "  ⚙️ Settings"
 TabSettingsBtn.Font = Enum.Font.GothamBold
-TabSettingsBtn.TextSize = 12
+TabSettingsBtn.TextSize = 13
 TabSettingsBtn.TextColor3 = BaseColors.Muted
 TabSettingsBtn.TextXAlignment = Enum.TextXAlignment.Left
 Instance.new("UICorner", TabSettingsBtn).CornerRadius = UDim.new(0, 8)
 
+-- PROFILE CARD WITH PULSING ONLINE DOT
 local ProfileCard = Instance.new("Frame", Sidebar)
 ProfileCard.Size = UDim2.new(1, -30, 0, 60)
 ProfileCard.Position = UDim2.new(0, 15, 1, -75)
@@ -267,10 +267,26 @@ Instance.new("UIStroke", ProfileCard).Color = BaseColors.Border
 
 local Avatar = Instance.new("ImageLabel", ProfileCard)
 Avatar.Size = UDim2.new(0, 36, 0, 36)
-Avatar.Position = UDim2.new(0, 12, 0.5, -18)
+Avatar.Position = UDim2.new(0, 10, 0.5, -18)
 Avatar.BackgroundColor3 = BaseColors.CardBg
 Instance.new("UICorner", Avatar).CornerRadius = UDim.new(1, 0)
 Avatar.Image = "rbxthumb://type=AvatarHeadShot&id="..LP.UserId.."&w=48&h=48"
+
+local OnlineDot = Instance.new("Frame", Avatar)
+OnlineDot.Size = UDim2.new(0, 10, 0, 10)
+OnlineDot.Position = UDim2.new(1, -8, 1, -8)
+OnlineDot.BackgroundColor3 = BaseColors.Success
+Instance.new("UICorner", OnlineDot).CornerRadius = UDim.new(1, 0)
+Instance.new("UIStroke", OnlineDot).Color = BaseColors.Bg
+-- Pulse Animation
+task.spawn(function()
+    while true do
+        TS:Create(OnlineDot, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 0.5}):Play()
+        task.wait(1)
+        TS:Create(OnlineDot, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {BackgroundTransparency = 0}):Play()
+        task.wait(1)
+    end
+end)
 
 local PName = Instance.new("TextLabel", ProfileCard)
 PName.Size = UDim2.new(1, -60, 0, 18)
@@ -288,11 +304,12 @@ PRank.Position = UDim2.new(0, 55, 0, 30)
 PRank.BackgroundTransparency = 1
 PRank.Text = "Lifetime License 💎"
 PRank.Font = Enum.Font.GothamMedium
-PRank.TextSize = 9
+PRank.TextSize = 10
 PRank.TextColor3 = CurrentTheme.Primary
 PRank.TextXAlignment = Enum.TextXAlignment.Left
 table.insert(ThemeObjects.PrimaryText, PRank)
 
+-- TABS
 local DashTab = Instance.new("Frame", MainContent)
 DashTab.Size = UDim2.new(1, -200, 1, 0)
 DashTab.Position = UDim2.new(0, 200, 0, 0)
@@ -305,7 +322,7 @@ SettingsTab.BackgroundTransparency = 1
 SettingsTab.Visible = false
 
 -- ==========================================
--- 🚀 DASHBOARD TAB 
+-- 🚀 DASHBOARD TAB (PIXEL PERFECT + VISUALIZER)
 -- ==========================================
 local HeaderTxt = Instance.new("TextLabel", DashTab)
 HeaderTxt.Size = UDim2.new(0, 300, 0, 30)
@@ -317,6 +334,7 @@ HeaderTxt.TextSize = 18
 HeaderTxt.TextColor3 = BaseColors.White
 HeaderTxt.TextXAlignment = Enum.TextXAlignment.Left
 
+-- 1. Engine Card : W=550, H=110
 local EngineCard = Instance.new("Frame", DashTab)
 EngineCard.Size = UDim2.new(0, 550, 0, 110)
 EngineCard.Position = UDim2.new(0, 25, 0, 55)
@@ -336,7 +354,7 @@ ETitle.TextColor3 = BaseColors.White
 ETitle.TextXAlignment = Enum.TextXAlignment.Left
 
 local EDesc = Instance.new("TextLabel", EngineCard)
-EDesc.Size = UDim2.new(0, 450, 0, 30)
+EDesc.Size = UDim2.new(0, 350, 0, 30)
 EDesc.Position = UDim2.new(0, 20, 0, 35)
 EDesc.BackgroundTransparency = 1
 EDesc.Text = "Real-time 3D environment analysis for undetectable spatial locking. (Stream-Proof Active)"
@@ -345,6 +363,40 @@ EDesc.TextSize = 11
 EDesc.TextColor3 = BaseColors.Muted
 EDesc.TextXAlignment = Enum.TextXAlignment.Left
 EDesc.TextWrapped = true
+
+-- 🎶 BONUS : AUDIO VISUALIZER (Right side of Engine Card)
+local VisContainer = Instance.new("Frame", EngineCard)
+VisContainer.Size = UDim2.new(0, 80, 0, 30)
+VisContainer.Position = UDim2.new(1, -100, 0, 15)
+VisContainer.BackgroundTransparency = 1
+
+local bars = {}
+for i = 1, 6 do
+    local bar = Instance.new("Frame", VisContainer)
+    bar.Size = UDim2.new(0, 6, 0, 5) 
+    bar.Position = UDim2.new(0, (i-1)*12, 1, -5)
+    bar.AnchorPoint = Vector2.new(0, 1) 
+    bar.BackgroundColor3 = CurrentTheme.Secondary
+    Instance.new("UICorner", bar).CornerRadius = UDim.new(1, 0)
+    table.insert(bars, bar)
+    table.insert(ThemeObjects.SecondaryBg, bar)
+end
+
+task.spawn(function()
+    while true do
+        if AutoHit then
+            for _, bar in ipairs(bars) do
+                local newHeight = math.random(5, 30)
+                TS:Create(bar, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 6, 0, newHeight)}):Play()
+            end
+        else
+            for _, bar in ipairs(bars) do
+                TS:Create(bar, TweenInfo.new(0.3), {Size = UDim2.new(0, 6, 0, 5)}):Play()
+            end
+        end
+        task.wait(0.2)
+    end
+end)
 
 local SwitchLbl = Instance.new("TextLabel", EngineCard)
 SwitchLbl.Size = UDim2.new(0, 200, 0, 20)
@@ -373,7 +425,7 @@ ToggleBtn.Size = UDim2.new(1, 0, 1, 0)
 ToggleBtn.BackgroundTransparency = 1
 ToggleBtn.Text = ""
 
--- LEFT COL (Stats)
+-- 2. Stat Card 1 (Targets) : W=265, H=105
 local StatCard1 = Instance.new("Frame", DashTab)
 StatCard1.Size = UDim2.new(0, 265, 0, 105)
 StatCard1.Position = UDim2.new(0, 25, 0, 185)
@@ -398,6 +450,7 @@ HitsDisplay.TextSize = 26
 HitsDisplay.TextColor3 = CurrentTheme.Primary
 table.insert(ThemeObjects.PrimaryText, HitsDisplay)
 
+-- 3. Stat Card 2 (Accuracy) : W=265, H=105
 local StatCard2 = Instance.new("Frame", DashTab)
 StatCard2.Size = UDim2.new(0, 265, 0, 105)
 StatCard2.Position = UDim2.new(0, 310, 0, 185)
@@ -422,10 +475,10 @@ AccDisplay.TextSize = 26
 AccDisplay.TextColor3 = CurrentTheme.Secondary
 table.insert(ThemeObjects.SecondaryText, AccDisplay)
 
--- RIGHT COL (Console)
+-- 4. Console Card : W=370, H=135
 local ConsoleCard = Instance.new("Frame", DashTab)
-ConsoleCard.Size = UDim2.new(0, 550, 0, 125)
-ConsoleCard.Position = UDim2.new(0, 25, 0, 310)
+ConsoleCard.Size = UDim2.new(0, 370, 0, 135)
+ConsoleCard.Position = UDim2.new(0, 25, 0, 300)
 ConsoleCard.BackgroundColor3 = BaseColors.CardBg
 Instance.new("UICorner", ConsoleCard).CornerRadius = UDim.new(0, 12)
 Instance.new("UIStroke", ConsoleCard).Color = BaseColors.Border
@@ -441,7 +494,7 @@ CTitle.TextColor3 = BaseColors.White
 CTitle.TextXAlignment = Enum.TextXAlignment.Left
 
 local LogContainer = Instance.new("ScrollingFrame", ConsoleCard)
-LogContainer.Size = UDim2.new(1, -30, 0, 80)
+LogContainer.Size = UDim2.new(1, -30, 0, 90)
 LogContainer.Position = UDim2.new(0, 15, 0, 35)
 LogContainer.BackgroundTransparency = 1
 LogContainer.BorderSizePixel = 0
@@ -461,8 +514,41 @@ local function AddLog(text, color)
     LogContainer.CanvasPosition = Vector2.new(0, 9999)
 end
 
+-- 5. Discord Widget : W=165, H=135
+local DCard = Instance.new("Frame", DashTab)
+DCard.Size = UDim2.new(0, 165, 0, 135)
+DCard.Position = UDim2.new(0, 410, 0, 300)
+DCard.BackgroundColor3 = BaseColors.CardBg
+Instance.new("UICorner", DCard).CornerRadius = UDim.new(0, 12)
+Instance.new("UIStroke", DCard).Color = BaseColors.Discord
+
+local DIcon = Instance.new("TextLabel", DCard)
+DIcon.Size = UDim2.new(1, 0, 0, 30)
+DIcon.Position = UDim2.new(0, 0, 0, 15)
+DIcon.BackgroundTransparency = 1
+DIcon.Text = "💬"
+DIcon.Font = Enum.Font.Gotham
+DIcon.TextSize = 24
+local DTitle = Instance.new("TextLabel", DCard)
+DTitle.Size = UDim2.new(1, 0, 0, 20)
+DTitle.Position = UDim2.new(0, 0, 0, 45)
+DTitle.BackgroundTransparency = 1
+DTitle.Text = "Community"
+DTitle.Font = Enum.Font.GothamMedium
+DTitle.TextSize = 11
+DTitle.TextColor3 = BaseColors.White
+local CopyBtn = Instance.new("TextButton", DCard)
+CopyBtn.Size = UDim2.new(0, 125, 0, 30)
+CopyBtn.Position = UDim2.new(0, 20, 0, 85)
+CopyBtn.BackgroundColor3 = BaseColors.Discord
+CopyBtn.Text = "Join Server"
+CopyBtn.Font = Enum.Font.GothamBold
+CopyBtn.TextSize = 11
+CopyBtn.TextColor3 = BaseColors.White
+Instance.new("UICorner", CopyBtn).CornerRadius = UDim.new(0, 6)
+
 -- ==========================================
--- ⚙️ SETTINGS TAB 
+-- ⚙️ SETTINGS TAB (Exact Layout)
 -- ==========================================
 local SetTitle = Instance.new("TextLabel", SettingsTab)
 SetTitle.Size = UDim2.new(0, 300, 0, 30)
@@ -476,7 +562,7 @@ SetTitle.TextXAlignment = Enum.TextXAlignment.Left
 
 local ThemeCard = Instance.new("Frame", SettingsTab)
 ThemeCard.Size = UDim2.new(0, 550, 0, 140)
-ThemeCard.Position = UDim2.new(0, 25, 0, 55)
+ThemeCard.Position = UDim2.new(0, 25, 0, 60)
 ThemeCard.BackgroundColor3 = BaseColors.CardBg
 Instance.new("UICorner", ThemeCard).CornerRadius = UDim.new(0, 12)
 Instance.new("UIStroke", ThemeCard).Color = BaseColors.Border
@@ -500,7 +586,7 @@ TGrid.CellSize = UDim2.new(0, 160, 0, 35)
 TGrid.CellPadding = UDim2.new(0, 15, 0, 10)
 
 local SecCard = Instance.new("Frame", SettingsTab)
-SecCard.Size = UDim2.new(0, 550, 0, 130)
+SecCard.Size = UDim2.new(0, 550, 0, 140)
 SecCard.Position = UDim2.new(0, 25, 0, 215)
 SecCard.BackgroundColor3 = BaseColors.CardBg
 Instance.new("UICorner", SecCard).CornerRadius = UDim.new(0, 12)
@@ -541,52 +627,20 @@ CreateSecItem(45, "Memory Hook Protection", "ACTIVE")
 CreateSecItem(70, "Anti-Cheat Bypass (v4.2)", "INJECTED")
 CreateSecItem(95, "StreamProof Engine (CTRL key)", "ENABLED")
 
-local DCard = Instance.new("Frame", SettingsTab)
-DCard.Size = UDim2.new(0, 550, 0, 70)
-DCard.Position = UDim2.new(0, 25, 0, 365)
-DCard.BackgroundColor3 = BaseColors.Discord
-Instance.new("UICorner", DCard).CornerRadius = UDim.new(0, 10)
-
-local DIcon = Instance.new("TextLabel", DCard)
-DIcon.Size = UDim2.new(0, 50, 1, 0)
-DIcon.Position = UDim2.new(0, 15, 0, 0)
-DIcon.BackgroundTransparency = 1
-DIcon.Text = "💬"
-DIcon.Font = Enum.Font.Gotham
-DIcon.TextSize = 24
-local DText = Instance.new("TextLabel", DCard)
-DText.Size = UDim2.new(0, 200, 1, 0)
-DText.Position = UDim2.new(0, 70, 0, 0)
-DText.BackgroundTransparency = 1
-DText.Text = "Join our Community for updates."
-DText.Font = Enum.Font.GothamBold
-DText.TextSize = 13
-DText.TextColor3 = Color3.new(1,1,1)
-DText.TextXAlignment = Enum.TextXAlignment.Left
-local CopyBtn = Instance.new("TextButton", DCard)
-CopyBtn.Size = UDim2.new(0, 130, 0, 35)
-CopyBtn.Position = UDim2.new(1, -150, 0.5, -17)
-CopyBtn.BackgroundColor3 = Color3.fromRGB(70, 80, 200)
-CopyBtn.Text = "Join Discord"
-CopyBtn.Font = Enum.Font.GothamBold
-CopyBtn.TextSize = 12
-CopyBtn.TextColor3 = Color3.new(1,1,1)
-Instance.new("UICorner", CopyBtn).CornerRadius = UDim.new(0, 8)
-
 -- ==========================================
--- 📊 TELEMETRY FOOTER (FIXED LAYOUT NO OVERLAP)
+-- 📊 TELEMETRY FOOTER (ABSOLUTE PLACEMENT FIX)
 -- ==========================================
 local Footer = Instance.new("Frame", AppWindow)
 Footer.Size = UDim2.new(1, 0, 0, 25)
 Footer.Position = UDim2.new(0, 0, 1, -25)
 Footer.BackgroundColor3 = BaseColors.CardBg
 Footer.BorderSizePixel = 0
-
 local FooterLine = Instance.new("Frame", Footer)
 FooterLine.Size = UDim2.new(1, 0, 0, 1)
 FooterLine.BackgroundColor3 = BaseColors.Border
 FooterLine.BorderSizePixel = 0
 
+-- 1. Status (Left)
 local FooterStatus = Instance.new("TextLabel", Footer)
 FooterStatus.Size = UDim2.new(0, 150, 1, 0)
 FooterStatus.Position = UDim2.new(0, 15, 0, 0)
@@ -597,42 +651,42 @@ FooterStatus.TextSize = 10
 FooterStatus.TextColor3 = BaseColors.Success
 FooterStatus.TextXAlignment = Enum.TextXAlignment.Left
 
--- Absolute positioning right to left to prevent overlaps
+-- 2. PING (Center-Left)
+local FooterPing = Instance.new("TextLabel", Footer)
+FooterPing.Size = UDim2.new(0, 80, 1, 0)
+FooterPing.Position = UDim2.new(0.5, -80, 0, 0)
+FooterPing.BackgroundTransparency = 1
+FooterPing.Text = "PING: --ms"
+FooterPing.Font = Enum.Font.GothamMedium
+FooterPing.TextSize = 10
+FooterPing.TextColor3 = BaseColors.Muted
+FooterPing.TextXAlignment = Enum.TextXAlignment.Center
+
+-- 3. FPS (Center-Right)
+local FooterFPS = Instance.new("TextLabel", Footer)
+FooterFPS.Size = UDim2.new(0, 80, 1, 0)
+FooterFPS.Position = UDim2.new(0.5, 0, 0, 0)
+FooterFPS.BackgroundTransparency = 1
+FooterFPS.Text = "FPS: 60"
+FooterFPS.Font = Enum.Font.GothamBold
+FooterFPS.TextSize = 10
+FooterFPS.TextColor3 = CurrentTheme.Primary
+FooterFPS.TextXAlignment = Enum.TextXAlignment.Center
+table.insert(ThemeObjects.PrimaryText, FooterFPS)
+
+-- 4. UPTIME (Right)
 local FooterTime = Instance.new("TextLabel", Footer)
-FooterTime.Size = UDim2.new(0, 70, 1, 0)
-FooterTime.Position = UDim2.new(1, -15, 0, 0)
-FooterTime.AnchorPoint = Vector2.new(1, 0)
+FooterTime.Size = UDim2.new(0, 120, 1, 0)
+FooterTime.Position = UDim2.new(1, -135, 0, 0) -- 120 width + 15 padding
 FooterTime.BackgroundTransparency = 1
-FooterTime.Text = "00:00:00"
+FooterTime.Text = "UPTIME 00:00:00"
 FooterTime.Font = Enum.Font.Code
 FooterTime.TextSize = 11
 FooterTime.TextColor3 = CurrentTheme.Secondary
 FooterTime.TextXAlignment = Enum.TextXAlignment.Right
 table.insert(ThemeObjects.SecondaryText, FooterTime)
 
-local FooterFPS = Instance.new("TextLabel", Footer)
-FooterFPS.Size = UDim2.new(0, 60, 1, 0)
-FooterFPS.Position = UDim2.new(1, -95, 0, 0)
-FooterFPS.AnchorPoint = Vector2.new(1, 0)
-FooterFPS.BackgroundTransparency = 1
-FooterFPS.Text = "FPS: 60"
-FooterFPS.Font = Enum.Font.GothamBold
-FooterFPS.TextSize = 10
-FooterFPS.TextColor3 = CurrentTheme.Primary
-FooterFPS.TextXAlignment = Enum.TextXAlignment.Right
-table.insert(ThemeObjects.PrimaryText, FooterFPS)
-
-local FooterPing = Instance.new("TextLabel", Footer)
-FooterPing.Size = UDim2.new(0, 70, 1, 0)
-FooterPing.Position = UDim2.new(1, -165, 0, 0)
-FooterPing.AnchorPoint = Vector2.new(1, 0)
-FooterPing.BackgroundTransparency = 1
-FooterPing.Text = "PING: 40ms"
-FooterPing.Font = Enum.Font.GothamMedium
-FooterPing.TextSize = 10
-FooterPing.TextColor3 = BaseColors.Muted
-FooterPing.TextXAlignment = Enum.TextXAlignment.Right
-
+-- Update Telemetry Loop
 local frames = 0
 RS.RenderStepped:Connect(function(dt)
     local up = tick() - SessionStart
